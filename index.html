@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bar do Coelho</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,900&family=Lora:wght@400;500;600;700&display=swap"" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f8fafc;
+      color: #111;
+      -webkit-font-smoothing: antialiased;
+      margin: 0; padding: 0;
+    }
+
+    /* ── Screen system ── */
+    .screen { display: block; background: #f8fafc; min-height: calc(100vh - 60px); }
+    .screen.hidden { display: none; }
+    #screen-receita { background: #ffffff; }
+
+    /* ── Typography ── */
+    .heading {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: #0f0f0f;
+    }
+    .drink-title {
+      font-family: 'Lora', serif;
+      font-weight: 800;
+      color: #0f0f0f;
+      line-height: 1.2;
+    }
+    .serif-accent {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-weight: 500;
+      color: #0891b2;
+    }
+    .eyebrow {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: #0891b2;
+    }
+    .section-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: #9ca3af;
+    }
+    .highlight {
+      font-weight: 600;
+      color: #0891b2; /* usa a cor do seu sistema */
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 13px 26px; border-radius: 3px; cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.08s ease, opacity 0.08s ease;
+      white-space: nowrap; line-height: 1; border: none; outline: none; text-decoration: none;
+    }
+    .btn:active { transform: scale(0.97); opacity: 0.95; }
+    .btn-fill { background: #0891b2; color: #fff; border: 1.5px solid #0891b2; }
+    .btn-fill:hover { background: #0e7490; border-color: #0e7490; }
+    .btn-line { background: transparent; color: #4b5563; border: 1.5px solid #d1d5db; }
+    .btn-line:hover { color: #0891b2; border-color: #0891b2; }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 8px 14px; border-radius: 3px; cursor: pointer;
+      background: transparent; border: none; color: #6b7280; outline: none;
+      transition: color 0.15s, transform 0.08s ease, opacity 0.08s ease;
+    }
+    .btn-ghost:hover { color: #111; }
+    .btn-ghost:active { transform: scale(0.97); opacity: 0.95; }
+
+    /* ── Cards ── */
+    .choice-card {
+      background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px;
+      text-align: left; cursor: pointer; width: 100%;
+      transition: border-color 0.15s, box-shadow 0.12s ease, transform 0.08s ease, opacity 0.08s ease; padding: 24px;
+    }
+    .choice-card:hover { border-color: #0891b2; box-shadow: 0 4px 20px rgba(8,145,178,0.10); }
+    .choice-card:active { transform: scale(0.97); opacity: 0.95; }
+    .choice-card.selected { border-color: #0891b2; background: #f0fdff; box-shadow: 0 4px 20px rgba(8,145,178,0.10); }
+    .choice-card-compact {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 600; letter-spacing: -0.01em;
+      background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px;
+      padding: 16px 20px; cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.12s ease, transform 0.08s ease, opacity 0.08s ease;
+      font-size: 18px; font-weight: 600; color: #111;
+      text-align: left;
+    }
+    .choice-card-compact:hover { border-color: #0891b2; box-shadow: 0 4px 20px rgba(8,145,178,0.10); }
+    .choice-card-compact:active { transform: scale(0.97); opacity: 0.95; }
+    .choice-card-compact.selected { border-color: #0891b2; background: #f0fdff; box-shadow: 0 4px 20px rgba(8,145,178,0.10); }
+    .drink-card {
+      background: #fff; border: 1px solid #e2e8f0; border-radius: 16px;
+      display: flex; flex-direction: column; overflow: hidden; cursor: pointer;
+      transition: box-shadow 0.12s ease, transform 0.08s ease, opacity 0.08s ease;
+    }
+    .drink-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+    .drink-card:active { transform: scale(0.98); opacity: 0.95; }
+    .drink-card-grid {
+      flex-direction: row; border-radius: 12px; align-items: stretch;
+    }
+    .drink-card-image {
+      width: 100%; aspect-ratio: 4/3; overflow: hidden;
+      background: #f1f5f9;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .drink-card-grid .drink-card-image {
+      flex: 0 0 33%; min-width: 140px; max-width: 240px;
+      width: auto; aspect-ratio: unset;
+    }
+    .drink-card-image img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; display: block; }
+    .drink-card-image-placeholder { font-size: 2.5rem; opacity: 0.2; color: #64748b; }
+    .drink-card-content {
+      display: flex; flex-direction: column; padding: 18px 18px 20px; flex: 1;
+    }
+    .drink-card-grid .drink-card-content { padding: 24px 28px; }
+    .drink-compatibility {
+      font-size: 11px; font-weight: 600; color: #16a34a; text-transform: uppercase;
+      margin: 0 0 8px 0; letter-spacing: 0.1em;
+    }
+    .drink-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .drink-description { font-size: 16px; color: #6b7280; line-height: 1.6; margin: 0 0 16px 0; }
+    .drink-card-grid .drink-description { font-size: 16px; margin: 0 0 20px 0; }
+    .drink-cta {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: #0891b2; background: none; border: none; cursor: pointer;
+      align-self: flex-start; padding: 0; transition: color 0.15s;
+    }
+    .drink-cta:hover { color: #0e7490; }
+
+    /* ── Chips ── */
+    .chip {
+      display: inline-flex; align-items: center;
+      padding: 11px 16px; border-radius: 100px;
+      font-size: 12px; font-weight: 600;
+      border: 1.5px solid #e2e8f0; background: #fff; color: #555;
+      cursor: pointer; user-select: none;
+      transition: border-color 0.15s, color 0.15s, background 0.15s, transform 0.08s ease, opacity 0.08s ease;
+    }
+    .chip:hover { border-color: #0891b2; color: #0891b2; }
+    .chip:active { transform: scale(0.97); opacity: 0.95; }
+    .chip.selected { background: #0891b2; border-color: #0891b2; color: #fff; }
+    .chip-lg {
+      display: inline-flex; align-items: center;
+      padding: 12px 20px; border-radius: 12px;
+      font-size: 16px; font-weight: 600;
+      border: 1.5px solid #e2e8f0; background: #fff; color: #374151;
+      cursor: pointer; user-select: none;
+      transition: border-color 0.15s, color 0.15s, background 0.15s, transform 0.08s ease, opacity 0.08s ease;
+    }
+    .chip-lg:hover { border-color: #0891b2; color: #0891b2; }
+    .chip-lg:active { transform: scale(0.97); opacity: 0.95; }
+    .chip-lg.selected { background: #0891b2; border-color: #0891b2; color: #fff; }
+
+    /* ── Flavor tag ── */
+    .flavor-tag {
+      display: inline-flex; align-items: center;
+      font-size: 12px; font-weight: 600; padding: 4px 10px;
+      border: 1.5px solid #d7d7d7; border-radius: 100px; background: #ffffff; color: #0891b2;
+    }
+
+    /* ── Selection chip ── */
+    .sel-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 100px;
+      font-size: 12px; font-weight: 600;
+      background: #ffffff; color: #0891b2; border: 1.5px solid #a5f3fc;
+    }
+    .sel-chip-x {
+      background: none; border: none; cursor: pointer; color: #0891b2;
+      padding: 0; font-size: 14px; line-height: 1; display: flex; align-items: center;
+    }
+    .sel-chip-x:hover { color: #0e7490; }
+
+    /* ── Badge ── */
+    .badge {
+      display: inline-flex; align-items: center;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 100px;
+    }
+    .badge-alc  { background: #fef3c7; color: #92400e; }
+    .badge-nonalc { background: #f0fdf4; color: #166534; }
+
+    /* ── Step number ── */
+    .step-num {
+      display: flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; min-width: 32px; border-radius: 50%;
+      background: #ecfeff; color: #0891b2;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+    }
+
+    /* ── Forms ── */
+    .form-input {
+      width: 100%; padding: 10px 14px; font-size: 13px;
+      border: 1.5px solid #e2e8f0; border-radius: 6px;
+      background: #fff; color: #111; outline: none; transition: border-color 0.14s;
+      font-family: inherit;
+    }
+    .form-input:focus { border-color: #0891b2; }
+    textarea.form-input { resize: vertical; min-height: 90px; }
+    .form-label {
+      display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #6b7280; margin-bottom: 6px;
+    }
+
+    /* ── Admin sidebar ── */
+    .admin-nav-btn {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; text-align: left; padding: 10px 14px; border-radius: 8px;
+      font-size: 13px; font-weight: 600; color: #374151;
+      border: none; background: none; cursor: pointer; transition: all 0.14s;
+    }
+    .admin-nav-btn:hover { background: #f1f5f9; color: #0891b2; }
+    .admin-nav-btn.active { background: #ecfeff; color: #0891b2; font-weight: 700; }
+    .admin-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 14px 20px; border-bottom: 1px solid #f1f5f9;
+    }
+    .admin-row:last-child { border-bottom: none; }
+    .admin-ing-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #ecfeff; border: 1.5px solid #a5f3fc; border-radius: 8px;
+      padding: 6px 10px; font-size: 13px; font-weight: 600; color: #0891b2;
+    }
+    .admin-ing-chip-remove {
+      background: none; border: none; cursor: pointer; color: #0891b2;
+      padding: 0; font-size: 16px; line-height: 1; display: flex; align-items: center;
+    }
+    .admin-ing-chip-remove:hover { color: #dc2626; }
+    .admin-ing-qty {
+      width: 80px; padding: 4px 8px; font-size: 12px; font-weight: 500;
+      border: 1px solid #a5f3fc; border-radius: 6px; background: #fff; color: #374151;
+      outline: none; text-align: center;
+    }
+    .admin-ing-qty:focus { border-color: #0891b2; }
+    .admin-dropdown {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: #fff; border: 1.5px solid #e2e8f0; border-radius: 10px;
+      max-height: 220px; overflow-y: auto; z-index: 50;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+    }
+    .admin-dropdown-item {
+      padding: 10px 14px; font-size: 13px; font-weight: 500; color: #374151;
+      cursor: pointer; border-bottom: 1px solid #f8fafc;
+    }
+    .admin-dropdown-item:last-child { border-bottom: none; }
+    .admin-dropdown-item:hover { background: #f0fdff; color: #0891b2; }
+    .admin-dropdown-empty { padding: 10px 14px; font-size: 13px; color: #9ca3af; }
+
+    /* ── Header ── */
+    header {
+      background: rgba(248,250,252,0.92); backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid #e2e8f0;
+    }
+    .header-inner {
+      max-width: 72rem; margin: 0 auto; padding: 0 24px;
+      height: 60px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .wordmark {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 11px; font-weight: 900; letter-spacing: 0.22em; text-transform: uppercase;
+      color: #0f0f0f; cursor: pointer; text-decoration: none; border: none; background: none;
+    }
+    nav { display: flex; align-items: center; gap: 24px; }
+    .nav-link {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+      color: #0891b2; cursor: pointer; text-decoration: none; transition: color 0.13s;
+      border: none; background: none; outline: none;
+    }
+    .nav-link:hover { color: #0e7490; }
+    .nav-link.muted { color: #9ca3af; }
+    .nav-link.muted:hover { color: #6b7280; }
+
+    /* ── Container ── */
+    
+    .container {
+      width: 100%;
+      max-width: 72rem;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 48px 24px;
+    }
+
+    .page-container {
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    /* ── Divider ── */
+    .divider { border: none; border-top: 1px solid #e2e8f0; margin: 28px 0; }
+
+    /* ── Search ── */
+    .search-wrap { position: relative; }
+    .search-input {
+      width: 100%; padding: 12px 16px 12px 44px;
+      font-size: 14px; border: 1.5px solid #e2e8f0; border-radius: 8px;
+      background: #fff; color: #111; outline: none; transition: border-color 0.14s;
+      font-family: inherit;
+    }
+    .search-input:focus { border-color: #0891b2; }
+    .search-icon {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      color: #9ca3af; pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════ HEADER ════════ -->
+  <header>
+    <div class="header-inner">
+      <button class="wordmark" onclick="goTo('home')">Bar do Coelho</button>
+      <nav>
+        <button class="nav-link" onclick="goTo('drinks')">Todos os drinks</button>
+        <button class="nav-link" onclick="goTo('escolha')">Sugestão</button>
+        <button class="nav-link muted" onclick="goTo('admin')">Admin</button>
+      </nav>
+    </div>
+  </header>
+
+
+  <!-- ════════ SCREEN: HOME ════════ -->
+  <div id="screen-home" class="screen">
+    <div class="page-container" style="min-height:calc(100vh - 60px); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding-top:48px; padding-bottom:80px;">
+
+      <img src="/assets/rabbit.svg" alt="Bar do Coelho" style="width:80px; opacity:0.8; margin-bottom:32px;" />
+
+      <h1 class="heading" style="font-size:clamp(3rem,7vw,5.5rem); max-width:16ch; margin:0 auto 24px;">
+        Descubra o <span class="serif-accent">drink</span><br>ideal para você
+      </h1>
+
+      <p style="font-size:18px; color:#3a3d42; max-width:40ch; margin:0 auto 40px; line-height:1.7;">
+        Diga o que você gosta ou quais ingredientes você quer usar. O Coelho sugere as receitas.
+      </p>
+
+      <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px;">
+        <button class="btn btn-line" onclick="goTo('drinks')">
+          <i data-lucide="wine" style="width:14px;height:14px;"></i>
+          Ver todos os drinks
+        </button>
+        <button class="btn btn-fill" onclick="goTo('escolha')">
+          Sugestão do Coelho
+          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+        </button>
+      </div>
+
+      <p style="font-size:10px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:#d1d5db; margin-top:80px;">
+        Feito com carinho por Alice
+      </p>
+    </div>
+  </div>
+
+
+  <!-- ════════ SCREEN: DRINKS LIST ════════ -->
+  <div id="screen-drinks" class="screen hidden">
+    <div style="max-width: 72rem; margin: 0 auto; padding: 48px 24px 64px;">
+
+      <button class="btn-ghost" onclick="goTo('home')" style="margin-bottom:28px;">
+        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+        Início
+      </button>
+
+      <p class="eyebrow" style="margin-bottom:10px;">Cardápio</p>
+      <h2 class="heading" style="font-size:clamp(1.8rem,3.5vw,2.6rem); margin-bottom:36px;">
+        Todos os drinks
+      </h2>
+
+      <!-- Control bar: search + filter btn + count -->
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+        <div class="search-wrap" style="max-width:340px; flex:1;">
+          <span class="search-icon"><i data-lucide="search" style="width:15px;height:15px;"></i></span>
+          <input type="text" class="search-input" id="drinks-search" placeholder="Buscar por nome de drink..." oninput="filterDrinks()" style="padding-top:9px; padding-bottom:9px;" />
+        </div>
+        <button class="btn btn-line" id="drinks-filter-btn" onclick="openDrinkFilters()" style="white-space:nowrap; padding:12px 18px;">
+          <i data-lucide="sliders-horizontal" style="width:13px;height:13px;"></i>
+          Filtros
+        </button>
+        <p id="drinks-count" class="section-label" style="margin:0 0 0 auto;"></p>
+      </div>
+
+      <!-- Active filter chips -->
+      <div id="drinks-active-filters" style="display:none; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:16px;"></div>
+
+      <div id="drinks-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:20px;"></div>
+
+    </div>
+  </div>
+
+
+  <!-- ════════ SCREEN: ESCOLHA ════════ -->
+  <div id="screen-escolha" class="screen hidden">
+    <div class="page-container" style="padding-top:48px; padding-bottom:64px;">
+
+      <button class="btn-ghost" onclick="goTo('home')" style="margin-bottom:40px;">
+        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+        Início
+      </button>
+
+      <p class="eyebrow" style="margin-bottom:12px;">Sugestão do Coelho</p>
+      <h2 class="heading" style="font-size:clamp(2rem,4vw,3rem); margin-bottom:8px;">
+        Como prefere descobrir seu drink?
+      </h2>
+      <p style="font-size:18px; color:#6b7280; margin-bottom:40px; max-width:100ch; line-height:1.7;">
+        Comece pelos ingredientes que você quer usar ou pelo sabor que mais combina com você.
+      </p>
+
+      <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+        gap: 24px;
+        ">
+        <button class="choice-card" onclick="goTo('ingredientes')">
+          <img src="/assets/coqueteleira.svg" alt="Ingredientes" style="width:52px;height:52px;margin-bottom:20px;opacity:0.85;" />
+          <p class="heading" style="font-size:1.2rem; margin-bottom:10px;">Pelos ingredientes</p>
+          <p style="font-size:16px; color:#6b7280; line-height:1.65; margin:0;">
+            Selecione o que você tem disponível e o Coelho sugere o melhor drink para o momento.
+          </p>
+        </button>
+        <button class="choice-card" onclick="goTo('sabores')">
+          <img src="/assets/drink.svg" alt="Sabor" style="width:52px;height:52px;margin-bottom:20px;opacity:0.85;" />
+          <p class="heading" style="font-size:1.2rem; margin-bottom:10px;">Pelo sabor</p>
+          <p style="font-size:16px; color:#6b7280; line-height:1.65; margin:0;">
+            Escolha o perfil de sabor que está com vontade e encontre o drink perfeito.
+          </p>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ════════ SCREEN: INGREDIENTES ════════ -->
+  <div id="screen-ingredientes" class="screen hidden">
+    <div class="page-container" style="padding-top:48px; padding-bottom:64px;">
+
+      <button class="btn-ghost" onclick="goTo('escolha')" style="margin-bottom:40px;">
+        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+        Voltar
+      </button>
+
+      <p class="eyebrow" style="margin-bottom:12px;">Pelos ingredientes</p>
+      <h2 class="heading" style="font-size:clamp(2rem,4vw,3rem); margin-bottom:8px;">
+        O que você tem na mesa?
+      </h2>
+      <p style="font-size:18px; color:#6b7280; margin-bottom:40px; line-height:1.7;">
+        Escolha os ingredientes que você quer usar e veja o que dá pra preparar com eles.
+      </p>
+
+      <div style="margin-bottom:32px;">
+        <p class="section-label" style="margin-bottom:16px;">Alcoólicos</p>
+        <div id="chips-alcoolicos" style="display:flex; flex-wrap:wrap; gap:12px;"></div>
+      </div>
+
+      <div style="margin-bottom:40px;">
+        <p class="section-label" style="margin-bottom:16px;">Não alcoólicos</p>
+        <div id="chips-nao-alcoolicos" style="display:flex; flex-wrap:wrap; gap:12px;"></div>
+      </div>
+
+      <div id="ingredientes-actions" class="hidden" style="display:none; align-items:center; gap:16px; margin-top:32px; flex-wrap:wrap;">
+        <button class="btn-ghost" onclick="clearIngredients()">
+          <i data-lucide="x" style="width:13px;height:13px;"></i>
+          Limpar seleção
+        </button>
+        <button class="btn btn-fill" onclick="showResultsByIngredients()">
+          Ver sugestões do Coelho
+          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ════════ SCREEN: SABORES ════════ -->
+  <div id="screen-sabores" class="screen hidden">
+    <div class="page-container" style="padding-top:48px; padding-bottom:64px;">
+
+      <button class="btn-ghost" onclick="goTo('escolha')" style="margin-bottom:40px;">
+        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+        Voltar
+      </button>
+
+      <p class="eyebrow" style="margin-bottom:12px;">Pelo sabor</p>
+      <h2 class="heading" style="font-size:clamp(2rem,4vw,3rem); margin-bottom:16px;">
+        Qual sabor você quer sentir hoje?
+      </h2>
+      <p style="font-size:18px; color:#6b7280; margin-bottom:40px; line-height:1.7;">
+        Escolha um ou mais perfis de sabor e descubra o drink ideal para o momento.
+      </p>
+
+      <div id="flavors-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; margin-bottom:40px;"></div>
+
+      <div id="sabores-actions" class="hidden" style="display:none; align-items:center; gap:16px; margin-top:8px; flex-wrap:wrap;">
+        <button class="btn-ghost" onclick="clearFlavors()">
+          <i data-lucide="x" style="width:13px;height:13px;"></i>
+          Limpar seleção
+        </button>
+        <button class="btn btn-fill" onclick="showResultsByFlavor()">
+          Ver sugestões do Coelho
+          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ════════ SCREEN: RESULTADO ════════ -->
+  <div id="screen-resultado" class="screen hidden">
+    <div class="page-container" style="padding-top:48px; padding-bottom:64px;">
+
+      <button id="resultado-back-btn" class="btn-ghost" style="margin-bottom:40px;">
+        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+        Voltar
+      </button>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:24px; margin-bottom:8px;">
+        <h2 class="heading" style="font-size:clamp(2rem,4vw,3rem); margin:0;">Drinks que combinam com você</h2>
+        <img src="/assets/rabbit.svg" alt="" aria-hidden="true" style="width:64px; height:64px; opacity:0.8; flex-shrink:0;" />
+      </div>
+      <p id="resultado-subtitle" style="font-size:18px; color:#6b7280; margin:0 0 24px; line-height:1.7;"></p>
+
+      <div id="resultado-selections" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;"></div>
+
+      <div id="results-list" style="display:flex; flex-direction:column; gap:20px; margin-bottom:48px;"></div>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap; padding-top:24px;">
+        <button class="btn btn-fill" onclick="goTo('escolha')">
+          <i data-lucide="sparkles" style="width:13px;height:13px;"></i>
+          Nova sugestão
+        </button>
+        <button id="resultado-refine-btn" class="btn btn-line">
+          <i data-lucide="sliders-horizontal" style="width:13px;height:13px;"></i>
+          Refinar seleção
+        </button>
+        <button class="btn btn-line" onclick="goTo('drinks')">
+          Ver todos os drinks
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ════════ SCREEN: RECEITA ════════ -->
+  <div id="screen-receita" class="screen hidden">
+    <div class="page-container" style="padding-top:48px; padding-bottom:64px;">
+
+      <button id="receita-back-btn" class="btn-ghost" style="margin-bottom:48px;">
+        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+        Voltar
+      </button>
+
+      <div id="receita-layout" style="display:grid; gap:56px;"></div>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:56px; padding-top:32px; border-top:1px solid #e2e8f0;">
+        <button class="btn btn-fill" onclick="goTo('escolha')">
+          <i data-lucide="sparkles" style="width:13px;height:13px;"></i>
+          Nova sugestão
+        </button>
+        <button class="btn btn-line" onclick="goTo('drinks')">
+          Ver todos os drinks
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ════════ SCREEN: ADMIN ════════ -->
+  <div id="screen-admin" class="screen hidden">
+    <div class="page-container" style="padding-top:48px; padding-bottom:64px;">
+
+      <button class="btn-ghost" onclick="goTo('home')" style="margin-bottom:32px;">
+        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+        Início
+      </button>
+
+      <div style="display:grid; grid-template-columns:200px 1fr; background:#fff; border:1.5px solid #e2e8f0; border-radius:16px; overflow:hidden; min-height:600px;">
+
+        <!-- Sidebar -->
+        <div style="border-right:1px solid #e2e8f0; padding:24px; background:#fafafa;">
+          <p class="eyebrow" style="margin-bottom:20px;">Administração</p>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <button class="admin-nav-btn active" id="admin-nav-drinks" onclick="switchAdminSection('drinks')">
+              <i data-lucide="wine" style="width:15px;height:15px;"></i>
+              Drinks
+            </button>
+            <button class="admin-nav-btn" id="admin-nav-sabores" onclick="switchAdminSection('sabores')">
+              <i data-lucide="tag" style="width:15px;height:15px;"></i>
+              Sabores
+            </button>
+            <button class="admin-nav-btn" id="admin-nav-ingredientes" onclick="switchAdminSection('ingredientes')">
+              <i data-lucide="list" style="width:15px;height:15px;"></i>
+              Ingredientes
+            </button>
+          </div>
+        </div>
+
+        <!-- Content area -->
+        <div style="padding:32px;">
+
+          <!-- ── Section: Drinks ── -->
+          <div id="admin-section-drinks">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+              <p class="heading" style="font-size:1.3rem; margin:0;">Drinks</p>
+              <button class="btn btn-fill" onclick="adminOpenDrinkForm()" style="padding:10px 18px; font-size:10px;">
+                <i data-lucide="plus" style="width:13px;height:13px;"></i>
+                Adicionar
+              </button>
+            </div>
+
+            <div id="admin-drinks-list" style="border:1.5px solid #e2e8f0; border-radius:10px; margin-bottom:24px; overflow:hidden;"></div>
+
+            <!-- Form: add / edit drink -->
+            <div id="admin-drink-form" class="hidden" style="border:1.5px solid #e2e8f0; border-radius:12px; padding:28px; margin-top:16px;">
+              <p class="heading" id="admin-drink-form-title" style="font-size:1.1rem; margin-bottom:24px;">Novo drink</p>
+              <div style="display:grid; gap:20px;">
+
+                <div>
+                  <label class="form-label">Nome</label>
+                  <input id="admin-nome" type="text" class="form-input" placeholder="Ex: Margarita" />
+                </div>
+
+                <div>
+                  <label class="form-label">Descrição</label>
+                  <input id="admin-descricao" type="text" class="form-input" placeholder="Uma breve descrição..." />
+                </div>
+
+                <div>
+                  <label class="form-label">URL da imagem (opcional)</label>
+                  <input id="admin-imagem" type="text" class="form-input" placeholder="https://..." />
+                </div>
+
+                <!-- Ingredient picker -->
+                <div>
+                  <label class="form-label">Ingredientes</label>
+                  <div id="admin-selected-ingredients" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; min-height:36px;"></div>
+                  <div style="position:relative;">
+                    <input type="text" id="admin-ing-search" class="form-input"
+                      placeholder="Buscar e adicionar ingrediente..."
+                      oninput="renderIngredientSearch()"
+                      onfocus="renderIngredientSearch()"
+                      onblur="setTimeout(()=>{ const d=document.getElementById('admin-ing-dropdown'); if(d) d.style.display='none'; }, 160)"
+                      autocomplete="off" />
+                    <div id="admin-ing-dropdown" class="admin-dropdown" style="display:none;"></div>
+                  </div>
+                </div>
+
+                <!-- Flavor picker -->
+                <div>
+                  <label class="form-label">Sabores</label>
+                  <div id="admin-flavor-picker" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+                </div>
+
+                <div>
+                  <label class="form-label">Modo de preparo (um passo por linha)</label>
+                  <textarea id="admin-passos" class="form-input" placeholder="Passo 1&#10;Passo 2&#10;Passo 3"></textarea>
+                </div>
+
+              </div>
+              <div style="display:flex; gap:10px; margin-top:24px;">
+                <button class="btn btn-fill" onclick="adminSaveDrink()">Salvar drink</button>
+                <button class="btn btn-line" onclick="adminCloseDrinkForm()">Cancelar</button>
+              </div>
+              <div id="admin-feedback" class="hidden" style="margin-top:14px; font-size:13px; font-weight:600;"></div>
+            </div>
+          </div>
+
+          <!-- ── Section: Sabores ── -->
+          <div id="admin-section-sabores" class="hidden">
+            <p class="heading" style="font-size:1.3rem; margin-bottom:24px;">Sabores</p>
+            <div id="admin-flavors-list" style="border:1.5px solid #e2e8f0; border-radius:10px; margin-bottom:24px; overflow:hidden;"></div>
+            <div style="border:1.5px solid #e2e8f0; border-radius:10px; padding:24px;">
+              <p class="heading" style="font-size:1rem; margin-bottom:16px;">Adicionar sabor</p>
+              <div style="display:grid; grid-template-columns:80px 1fr; gap:12px; margin-bottom:16px;">
+                <div>
+                  <label class="form-label">Emoji</label>
+                  <input id="admin-flavor-emoji" type="text" class="form-input" placeholder="🍋" />
+                </div>
+                <div>
+                  <label class="form-label">Nome</label>
+                  <input id="admin-flavor-name" type="text" class="form-input" placeholder="Ex: Tropical" />
+                </div>
+              </div>
+              <button class="btn btn-fill" onclick="adminAddFlavor()">
+                <i data-lucide="plus" style="width:13px;height:13px;"></i>
+                Adicionar
+              </button>
+              <div id="admin-flavor-feedback" class="hidden" style="margin-top:12px; font-size:13px; font-weight:600;"></div>
+            </div>
+          </div>
+
+          <!-- ── Section: Ingredientes ── -->
+          <div id="admin-section-ingredientes" class="hidden">
+            <p class="heading" style="font-size:1.3rem; margin-bottom:24px;">Ingredientes</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+              <div>
+                <p class="section-label" style="margin-bottom:12px;">Alcoólicos</p>
+                <div id="admin-alc-list" style="border:1.5px solid #e2e8f0; border-radius:10px; overflow:hidden; margin-bottom:16px;"></div>
+                <div style="border:1.5px solid #e2e8f0; border-radius:10px; padding:20px;">
+                  <div style="margin-bottom:12px;">
+                    <label class="form-label">Nome</label>
+                    <input id="admin-new-alc-name" type="text" class="form-input" placeholder="Ex: Bourbon" />
+                  </div>
+                  <button class="btn btn-fill" style="padding:10px 16px; font-size:10px;" onclick="adminAddIngredient('alcoolico')">
+                    <i data-lucide="plus" style="width:12px;height:12px;"></i>
+                    Adicionar
+                  </button>
+                </div>
+              </div>
+              <div>
+                <p class="section-label" style="margin-bottom:12px;">Não alcoólicos</p>
+                <div id="admin-nonalc-list" style="border:1.5px solid #e2e8f0; border-radius:10px; overflow:hidden; margin-bottom:16px;"></div>
+                <div style="border:1.5px solid #e2e8f0; border-radius:10px; padding:20px;">
+                  <div style="margin-bottom:12px;">
+                    <label class="form-label">Nome</label>
+                    <input id="admin-new-nonalc-name" type="text" class="form-input" placeholder="Ex: Água de coco" />
+                  </div>
+                  <button class="btn btn-fill" style="padding:10px 16px; font-size:10px;" onclick="adminAddIngredient('nao-alcoolico')">
+                    <i data-lucide="plus" style="width:12px;height:12px;"></i>
+                    Adicionar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /content -->
+      </div><!-- /grid -->
+    </div>
+  </div>
+
+
+  <!-- ════════ FILTER PANEL ════════ -->
+  <div id="drinks-filter-overlay" onclick="closeDrinkFilters()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.25); z-index:200;"></div>
+  <div id="drinks-filter-panel" style="display:none; position:fixed; top:0; right:0; height:100%; width:min(420px,100vw); background:#fff; border-left:1.5px solid #e2e8f0; z-index:201; flex-direction:column;">
+
+    <!-- Panel header -->
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid #e2e8f0; flex-shrink:0;">
+      <p class="heading" style="font-size:1.1rem; margin:0;">Filtros</p>
+      <button class="btn-ghost" onclick="closeDrinkFilters()" style="padding:6px;">
+        <i data-lucide="x" style="width:18px;height:18px;"></i>
+      </button>
+    </div>
+
+    <!-- Panel scrollable content -->
+    <div style="flex:1; overflow-y:auto; padding:20px 24px;">
+
+      <!-- Sabor -->
+      <p class="section-label" style="margin-bottom:10px;">Sabor</p>
+      <div id="filter-panel-flavors" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;"></div>
+
+      <!-- Ingredientes -->
+      <p class="section-label" style="margin-bottom:10px;">Ingredientes</p>
+      <div id="filter-panel-ingredients" style="display:flex; flex-wrap:wrap; gap:8px; padding-bottom:8px;"></div>
+
+    </div>
+
+    <!-- Panel footer -->
+    <div style="display:flex; gap:10px; padding:16px 24px; border-top:1px solid #e2e8f0; flex-shrink:0;">
+      <button class="btn btn-line" onclick="clearDrinkFilters()" style="flex:1; justify-content:center;">Limpar</button>
+      <button class="btn btn-fill" onclick="closeDrinkFilters()" style="flex:1; justify-content:center;">Aplicar filtros</button>
+    </div>
+
+  </div>
+
+
+  <!-- ════════════════════════════════════
+       JAVASCRIPT
+  ════════════════════════════════════ -->
+  <script>
+
+    // ══════════════════════════
+    // DATA
+    // ══════════════════════════
+
+    const INGREDIENTS_ALCOOLICOS = [
+      { id: 'aperol',        name: 'Aperol' },
+      { id: 'cachaca',       name: 'Cachaça' },
+      { id: 'campari',       name: 'Campari' },
+      { id: 'champanhe',     name: 'Champanhe' },
+      { id: 'gin',           name: 'Gin' },
+      { id: 'rum',           name: 'Rum' },
+      { id: 'tequila',       name: 'Tequila' },
+      { id: 'triple-sec',    name: 'Triple Sec' },
+      { id: 'vermute',       name: 'Vermute' },
+      { id: 'vinho-branco',  name: 'Vinho Branco' },
+      { id: 'vodka',         name: 'Vodka' },
+      { id: 'whisky',        name: 'Whisky' },
+    ];
+
+    const INGREDIENTS_NAO_ALCOOLICOS = [
+      { id: 'abacaxi',        name: 'Abacaxi' },
+      { id: 'acucar',         name: 'Açúcar' },
+      { id: 'agua-gas',       name: 'Água com gás' },
+      { id: 'agua-tonica',    name: 'Água tônica' },
+      { id: 'clara-ovo',      name: 'Clara de ovo' },
+      { id: 'gelo',           name: 'Gelo' },
+      { id: 'laranja',        name: 'Laranja' },
+      { id: 'leite-coco',     name: 'Leite de coco' },
+      { id: 'limao',          name: 'Limão' },
+      { id: 'mel',            name: 'Mel' },
+      { id: 'menta',          name: 'Menta' },
+      { id: 'morango',        name: 'Morango' },
+      { id: 'suco-abacaxi',   name: 'Suco de abacaxi' },
+      { id: 'suco-cranberry', name: 'Suco de cranberry' },
+      { id: 'suco-laranja',   name: 'Suco de laranja' },
+    ];
+
+    let FLAVORS = [
+      { id: 'amargo',      name: 'Amargo',      emoji: '🍊', description: 'Complexo e sofisticado. Para paladares que apreciam profundidade.' },
+      { id: 'citrico',     name: 'Cítrico',     emoji: '🍋', description: 'Ácido, vivo e revigorante. Toque de limão, laranja ou fruta cítrica.' },
+      { id: 'doce',        name: 'Doce',        emoji: '🍓', description: 'Suave, frutado e confortante. Drinks com açúcar, frutas e xaropes.' },
+      { id: 'forte',       name: 'Forte',       emoji: '🥃', description: 'Encorpado, intenso e marcante. Destilados no protagonismo.' },
+      { id: 'leve',        name: 'Leve',        emoji: '🫧', description: 'Suave, delicado e de baixa graduação. Perfeito para beber sem pressa.' },
+      { id: 'refrescante', name: 'Refrescante', emoji: '🌿', description: 'Leve, aromático e perfeito para o calor. Menta, pepino e gás.' },
+    ];
+
+    let DRINKS = [
+      {
+        name: 'Aperol Spritz',
+        description: 'Italiano, levemente amargo e muito elegante. Perfeito para ocasiões sociais.',
+        flavors: ['amargo', 'refrescante'],
+        ingredients: [
+          { id: 'aperol',    alcoolico: true  },
+          { id: 'champanhe', alcoolico: true  },
+          { id: 'agua-gas',  alcoolico: false },
+          { id: 'gelo',      alcoolico: false },
+        ],
+        steps: [
+          'Encha um copo tipo taça de vinho com gelo.',
+          'Adicione 90ml de Prosecco.',
+          'Adicione 60ml de Aperol.',
+          'Complete com um splash de água com gás (30ml).',
+          'Mexa suavemente e decore com uma rodela de laranja.',
+        ],
+        image: '',
+      },
+      {
+        name: 'Caipirinha',
+        description: 'O drink nacional mais famoso do Brasil. Simples, ácida e irresistível.',
+        flavors: ['citrico', 'forte'],
+        ingredients: [
+          { id: 'cachaca', alcoolico: true  },
+          { id: 'limao',   alcoolico: false },
+          { id: 'acucar',  alcoolico: false },
+          { id: 'gelo',    alcoolico: false },
+        ],
+        steps: [
+          'Corte meio limão em 4 pedaços e coloque no copo.',
+          'Adicione 2 colheres de chá de açúcar.',
+          'Macere bem o limão com o açúcar.',
+          'Adicione gelo picado até encher o copo.',
+          'Despeje 60ml de cachaça e mexa bem.',
+        ],
+        image: '',
+      },
+      {
+        name: 'Cosmopolitan',
+        description: 'Elegante, levemente ácido e com linda cor rosada. Clássico dos anos 90.',
+        flavors: ['citrico', 'doce'],
+        ingredients: [
+          { id: 'vodka',          alcoolico: true  },
+          { id: 'triple-sec',     alcoolico: true  },
+          { id: 'suco-cranberry', alcoolico: false },
+          { id: 'limao',          alcoolico: false },
+        ],
+        steps: [
+          'Coloque todos os ingredientes em uma coqueteleira com gelo.',
+          'Agite vigorosamente por 15 segundos.',
+          'Coe em uma taça de martini gelada.',
+          'Decore com casca de limão flambada ou torcida.',
+        ],
+        image: '',
+      },
+      {
+        name: 'Gin Tônica',
+        description: 'Clássico e refrescante. O gin e a tônica se complementam em harmonia cítrica e levemente amarga.',
+        flavors: ['citrico', 'refrescante'],
+        ingredients: [
+          { id: 'gin',         alcoolico: true  },
+          { id: 'agua-tonica', alcoolico: false },
+          { id: 'limao',       alcoolico: false },
+          { id: 'gelo',        alcoolico: false },
+        ],
+        steps: [
+          'Encha um copo tipo taça ou long drink com gelo.',
+          'Adicione 50ml de gin.',
+          'Complete com água tônica gelada (150ml).',
+          'Esprema uma rodela de limão e use como decoração.',
+          'Mexa suavemente e sirva imediatamente.',
+        ],
+        image: '',
+      },
+      {
+        name: 'Mojito',
+        description: 'Cubano, aromático e perfeito para dias quentes. Menta fresca faz toda a diferença.',
+        flavors: ['refrescante', 'leve'],
+        ingredients: [
+          { id: 'rum',      alcoolico: true  },
+          { id: 'limao',    alcoolico: false },
+          { id: 'menta',    alcoolico: false },
+          { id: 'acucar',   alcoolico: false },
+          { id: 'agua-gas', alcoolico: false },
+          { id: 'gelo',     alcoolico: false },
+        ],
+        steps: [
+          'Coloque folhas de hortelã e açúcar em um copo.',
+          'Esprema o suco de 1 limão sobre a mistura.',
+          'Macere levemente a hortelã para liberar o aroma.',
+          'Adicione gelo picado.',
+          'Adicione 50ml de rum branco.',
+          'Complete com água com gás e mexa delicadamente.',
+          'Decore com ramo de hortelã e rodela de limão.',
+        ],
+        image: '',
+      },
+      {
+        name: 'Negroni',
+        description: 'Sofisticado e encorpado. Para quem aprecia a complexidade do amargo.',
+        flavors: ['amargo', 'forte'],
+        ingredients: [
+          { id: 'gin',     alcoolico: true  },
+          { id: 'campari', alcoolico: true  },
+          { id: 'vermute', alcoolico: true  },
+          { id: 'gelo',    alcoolico: false },
+        ],
+        steps: [
+          'Coloque gelo em um copo rocks.',
+          'Adicione 30ml de gin, 30ml de Campari e 30ml de vermute doce.',
+          'Mexa por 30 segundos com colher de bar.',
+          'Decore com uma casca de laranja expressa sobre o drink.',
+        ],
+        image: '',
+      },
+      {
+        name: 'Piña Colada',
+        description: 'Tropical, cremoso e irresistível. Um abraço em forma de bebida.',
+        flavors: ['doce', 'leve'],
+        ingredients: [
+          { id: 'rum',          alcoolico: true  },
+          { id: 'leite-coco',   alcoolico: false },
+          { id: 'suco-abacaxi', alcoolico: false },
+          { id: 'gelo',         alcoolico: false },
+        ],
+        steps: [
+          'Coloque 50ml de rum, 80ml de leite de coco e 120ml de suco de abacaxi no liquidificador.',
+          'Adicione 1 xícara de gelo.',
+          'Bata até ficar cremoso e homogêneo.',
+          'Despeje em um copo alto.',
+          'Decore com uma fatia de abacaxi.',
+        ],
+        image: '',
+      },
+      {
+        name: 'Whisky Sour',
+        description: 'Equilibrado entre o doce e o ácido, com final suave da clara de ovo.',
+        flavors: ['amargo', 'citrico'],
+        ingredients: [
+          { id: 'whisky',    alcoolico: true  },
+          { id: 'limao',     alcoolico: false },
+          { id: 'acucar',    alcoolico: false },
+          { id: 'clara-ovo', alcoolico: false },
+        ],
+        steps: [
+          'Adicione 60ml de whisky, 30ml de suco de limão e 15ml de xarope simples na coqueteleira.',
+          'Adicione 1 clara de ovo.',
+          'Agite SEM gelo por 10 segundos (dry shake).',
+          'Adicione gelo e agite novamente por 15 segundos.',
+          'Coe em copo rocks com um grande cubo de gelo.',
+          'Finalize com 2–3 gotas de Angostura bitters.',
+        ],
+        image: '',
+      },
+    ];
+
+
+    // ══════════════════════════
+    // STATE
+    // ══════════════════════════
+
+    const state = {
+      selectedIngredients: new Set(),
+      selectedFlavors:     new Set(),
+      currentMode:         null,        // 'ingredientes' | 'sabor'
+      currentReceita:      null,
+      receitaFrom:         'resultado',
+    };
+
+    const drinkFilters = {
+      search:      '',
+      flavors:     new Set(),
+      ingredients: new Set(),
+    };
+
+    let comingFromRefinement = false;
+
+
+    // ══════════════════════════
+    // NAVIGATION
+    // ══════════════════════════
+
+    function goTo(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+      const target = document.getElementById('screen-' + screenId);
+      if (target) { target.classList.remove('hidden'); window.scrollTo(0, 0); }
+
+      // Reset filters unless user is refining a previous selection
+      if (!comingFromRefinement) {
+        if (screenId === 'ingredientes') state.selectedIngredients.clear();
+        if (screenId === 'sabores')      state.selectedFlavors.clear();
+        if (screenId === 'drinks') {
+          drinkFilters.flavors.clear();
+          drinkFilters.ingredients.clear();
+          const searchEl = document.getElementById('drinks-search');
+          if (searchEl) searchEl.value = '';
+        }
+      }
+      comingFromRefinement = false;
+
+      if (screenId === 'admin')        adminInit();
+      if (screenId === 'sabores')      renderFlavorsGrid();
+      if (screenId === 'drinks')       initDrinksScreen();
+      if (screenId === 'ingredientes') renderChips();
+      lucide.createIcons();
+    }
+
+    function refinarSelecao(screenId) {
+      comingFromRefinement = true;
+      goTo(screenId);
+    }
+
+
+    // ══════════════════════════
+    // DRINKS LIST SCREEN
+    // ══════════════════════════
+
+    function initDrinksScreen() {
+      filterDrinks();
+      renderActiveFilters();
+      lucide.createIcons();
+    }
+
+    function toggleDrinkFilter(type, id) {
+      const set = type === 'flavor' ? drinkFilters.flavors : drinkFilters.ingredients;
+      if (set.has(id)) set.delete(id); else set.add(id);
+      filterDrinks();
+    }
+
+    function openDrinkFilters() {
+      document.getElementById('drinks-filter-overlay').style.display = 'block';
+      document.getElementById('drinks-filter-panel').style.display = 'flex';
+      renderFilterPanel();
+      lucide.createIcons();
+    }
+
+    function closeDrinkFilters() {
+      document.getElementById('drinks-filter-overlay').style.display = 'none';
+      document.getElementById('drinks-filter-panel').style.display = 'none';
+      renderActiveFilters();
+    }
+
+    function renderFilterPanel() {
+      const allIngs = [...INGREDIENTS_ALCOOLICOS, ...INGREDIENTS_NAO_ALCOOLICOS]
+        .sort((a, b) => a.name.localeCompare(b.name, 'pt'));
+
+      const flavorsEl = document.getElementById('filter-panel-flavors');
+      if (flavorsEl) {
+        flavorsEl.innerHTML = FLAVORS.map(f => `
+          <button class="chip${drinkFilters.flavors.has(f.id) ? ' selected' : ''}"
+            onclick="toggleDrinkFilter('flavor','${f.id}'); renderFilterPanel();">
+            ${f.emoji} ${f.name}
+          </button>`).join('');
+      }
+
+      const ingsEl = document.getElementById('filter-panel-ingredients');
+      if (ingsEl) {
+        ingsEl.innerHTML = allIngs.map(i => `
+          <button class="chip${drinkFilters.ingredients.has(i.id) ? ' selected' : ''}"
+            onclick="toggleDrinkFilter('ingredient','${i.id}'); renderFilterPanel();">
+            ${i.name}
+          </button>`).join('');
+      }
+    }
+
+    function clearDrinkFilters() {
+      drinkFilters.flavors.clear();
+      drinkFilters.ingredients.clear();
+      const searchEl = document.getElementById('drinks-search');
+      if (searchEl) searchEl.value = '';
+      renderFilterPanel();
+      filterDrinks();
+      renderActiveFilters();
+    }
+
+    function renderActiveFilters() {
+      const container = document.getElementById('drinks-active-filters');
+      if (!container) return;
+      const total = drinkFilters.flavors.size + drinkFilters.ingredients.size;
+      const btn = document.getElementById('drinks-filter-btn');
+
+      if (total === 0) {
+        container.style.display = 'none';
+        container.innerHTML = '';
+        if (btn) { btn.style.borderColor = ''; btn.style.color = ''; }
+        return;
+      }
+
+      if (btn) { btn.style.borderColor = '#0891b2'; btn.style.color = '#0891b2'; }
+      container.style.display = 'flex';
+
+      const allIngs = [...INGREDIENTS_ALCOOLICOS, ...INGREDIENTS_NAO_ALCOOLICOS];
+      let html = '';
+
+      drinkFilters.flavors.forEach(fid => {
+        const f = FLAVORS.find(x => x.id === fid);
+        if (!f) return;
+        html += `<span class="sel-chip">${f.emoji} ${f.name}
+          <button class="sel-chip-x" onclick="toggleDrinkFilter('flavor','${fid}'); renderActiveFilters();">×</button>
+        </span>`;
+      });
+
+      drinkFilters.ingredients.forEach(iid => {
+        const i = allIngs.find(x => x.id === iid);
+        if (!i) return;
+        html += `<span class="sel-chip">${i.name}
+          <button class="sel-chip-x" onclick="toggleDrinkFilter('ingredient','${iid}'); renderActiveFilters();">×</button>
+        </span>`;
+      });
+
+      html += `<button class="btn-ghost" style="padding:4px 10px; font-size:10px;"
+        onclick="clearDrinkFilters()">Limpar tudo</button>`;
+
+      container.innerHTML = html;
+    }
+
+    function filterDrinks() {
+      const search = (document.getElementById('drinks-search')?.value || '').toLowerCase().trim();
+
+      let results = DRINKS.map((d, i) => ({ drink: d, index: i }));
+
+      if (search) {
+        results = results.filter(({ drink }) => drink.name.toLowerCase().includes(search));
+      }
+      if (drinkFilters.flavors.size > 0) {
+        results = results.filter(({ drink }) =>
+          [...drinkFilters.flavors].some(fid => drink.flavors.includes(fid))
+        );
+      }
+      if (drinkFilters.ingredients.size > 0) {
+        results = results.filter(({ drink }) =>
+          [...drinkFilters.ingredients].some(iid =>
+            drink.ingredients.some(ing => (typeof ing === 'string' ? ing : ing.id) === iid)
+          )
+        );
+      }
+
+      const countEl = document.getElementById('drinks-count');
+      if (countEl) countEl.textContent = `${results.length} drink${results.length !== 1 ? 's' : ''}`;
+
+      const grid = document.getElementById('drinks-grid');
+      if (!grid) return;
+
+      if (results.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1; text-align:center; padding:64px 24px; color:#9ca3af;">
+            <p style="font-size:15px; font-weight:600; color:#374151; margin-bottom:6px;">Nenhum drink encontrado</p>
+            <p style="font-size:13px;">Tente outros filtros ou limpe a busca.</p>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = results.map(({ drink, index }) => `
+        <div class="drink-card" onclick="openReceita(${index}, 'drinks')">
+          <div class="drink-card-image">
+            ${drink.image
+              ? `<img src="${drink.image}" alt="${drink.name}" />`
+              : `<span class="drink-card-image-placeholder" style="font-size:4rem;">◈</span>`
+            }
+          </div>
+          <div class="drink-card-content">
+            <p class="drink-title" style="font-size:1.4rem; margin-bottom:16px;">${drink.name}</p>
+            <div class="drink-tags">${renderFlavorTags(drink.flavors)}</div>
+            <p class="drink-description">${drink.description}</p>
+            <span class="drink-cta">Ver receita →</span>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+
+    // ══════════════════════════
+    // INGREDIENT CHIPS
+    // ══════════════════════════
+
+    function renderChips() {
+      renderChipGroup('chips-alcoolicos',     INGREDIENTS_ALCOOLICOS);
+      renderChipGroup('chips-nao-alcoolicos', INGREDIENTS_NAO_ALCOOLICOS);
+      updateIngredientActions();
+    }
+
+    function renderChipGroup(containerId, items) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = items.map(item => `
+        <button class="choice-card-compact${state.selectedIngredients.has(item.id) ? ' selected' : ''}" onclick="toggleIngredient('${item.id}')">
+          ${item.name}
+        </button>
+      `).join('');
+    }
+
+    function toggleIngredient(id) {
+      if (state.selectedIngredients.has(id)) state.selectedIngredients.delete(id);
+      else state.selectedIngredients.add(id);
+      renderChips();
+    }
+
+    function clearIngredients() {
+      state.selectedIngredients.clear();
+      renderChips();
+    }
+
+    function updateIngredientActions() {
+      const bar = document.getElementById('ingredientes-actions');
+      if (!bar) return;
+
+      if (state.selectedIngredients.size > 0) {
+        bar.style.display = 'flex';
+      } else {
+        bar.style.display = 'none';
+      }
+    }
+
+
+    // ══════════════════════════
+    // FLAVORS (multi-select)
+    // ══════════════════════════
+
+    function renderFlavorsGrid() {
+      const grid = document.getElementById('flavors-grid');
+      if (!grid) return;
+      grid.innerHTML = FLAVORS.map(f => `
+        <button class="choice-card${state.selectedFlavors.has(f.id) ? ' selected' : ''}" onclick="toggleFlavor('${f.id}')">
+          <div style="font-size:1.75rem; margin-bottom:10px;">${f.emoji}</div>
+          <p class="heading" style="font-size:1.05rem; margin-bottom:8px;">${f.name}</p>
+          <p style="font-size:13px; color:#6b7280; line-height:1.55; margin:0;">${f.description || ''}</p>
+        </button>
+      `).join('');
+      updateFlavorActions();
+    }
+
+    function toggleFlavor(flavorId) {
+      if (state.selectedFlavors.has(flavorId)) state.selectedFlavors.delete(flavorId);
+      else state.selectedFlavors.add(flavorId);
+      renderFlavorsGrid();
+    }
+
+    function clearFlavors() {
+      state.selectedFlavors.clear();
+      renderFlavorsGrid();
+    }
+
+    function updateFlavorActions() {
+      const bar = document.getElementById('sabores-actions');
+      if (!bar) return;
+
+      if (state.selectedFlavors.size > 0) {
+        bar.style.display = 'flex';
+      } else {
+        bar.style.display = 'none';
+      }
+    }
+
+    function showResultsByFlavor() {
+      state.currentMode = 'sabor';
+
+      const selected = [...state.selectedFlavors];
+      const scored = DRINKS
+        .map((d, i) => {
+          const matches = d.flavors.filter(fid => state.selectedFlavors.has(fid)).length;
+          const score   = matches > 0 ? Math.round((matches / selected.length) * 100) : 0;
+          return { drink: d, index: i, score };
+        })
+        .filter(x => x.score > 0)
+        .sort((a, b) => b.score - a.score);
+
+      document.getElementById('resultado-subtitle').innerHTML =
+        `Baseado nos ingredientes selecionados, <span class="highlight">o coelho sugere ${scored.length} drink${scored.length !== 1 ? 's' : ''}</span>.`;
+
+      document.getElementById('resultado-back-btn').onclick   = () => goTo('sabores');
+      document.getElementById('resultado-refine-btn').onclick = () => refinarSelecao('sabores');
+
+      renderSelectionChips();
+      renderResults(scored);
+      goTo('resultado');
+    }
+
+
+    // ══════════════════════════
+    // INGREDIENT RESULTS
+    // ══════════════════════════
+
+    function showResultsByIngredients() {
+      state.currentMode = 'ingredientes';
+
+      const scored = DRINKS
+        .map((d, i) => ({ drink: d, index: i, score: calculateCompatibility(d) }))
+        .filter(x => x.score > 0)
+        .sort((a, b) => b.score - a.score);
+
+      document.getElementById('resultado-subtitle').innerHTML =
+        `Baseado nos ingredientes selecionados, <span class="highlight">o coelho sugere ${scored.length} drink${scored.length !== 1 ? 's' : ''}</span>.`;
+
+      document.getElementById('resultado-back-btn').onclick   = () => goTo('ingredientes');
+      document.getElementById('resultado-refine-btn').onclick = () => refinarSelecao('ingredientes');
+
+      renderSelectionChips();
+      renderResults(scored);
+      goTo('resultado');
+    }
+
+    function calculateCompatibility(drink) {
+      const matches = drink.ingredients.filter(ing => {
+        const id = typeof ing === 'string' ? ing : ing.id;
+        return state.selectedIngredients.has(id);
+      }).length;
+      return Math.round((matches / drink.ingredients.length) * 100);
+    }
+
+
+    // ══════════════════════════
+    // RENDER RESULTS
+    // ══════════════════════════
+
+    function renderResults(drinksWithScores) {
+      const list = document.getElementById('results-list');
+      if (!list) return;
+
+      if (drinksWithScores.length === 0) {
+        list.innerHTML = `
+          <div style="text-align:center; padding:48px 24px; color:#9ca3af; border:1.5px solid #e2e8f0; border-radius:12px; background:#fff;">
+            <p style="font-size:15px; font-weight:600; color:#374151; margin-bottom:6px;">Nenhum drink encontrado</p>
+            <p style="font-size:13px;">Tente selecionar mais ingredientes ou um sabor diferente.</p>
+          </div>`;
+        return;
+      }
+
+      list.innerHTML = drinksWithScores.map(({ drink, index, score }) => `
+        <div class="drink-card drink-card-grid" onclick="openReceita(${index}, 'resultado')">
+          <div class="drink-card-image" style="border-right:1px solid #e2e8f0;">
+            ${drink.image
+              ? `<img src="${drink.image}" alt="${drink.name}" />`
+              : `<span class="drink-card-image-placeholder">◈</span>`
+            }
+          </div>
+          <div class="drink-card-content">
+            <p class="drink-compatibility">Combina ${score}% com você</p>
+            <p class="drink-title" style="font-size:1.5rem; margin-bottom:16px;">${drink.name}</p>
+            <div class="drink-tags">${renderFlavorTags(drink.flavors)}</div>
+            <p class="drink-description">${drink.description}</p>
+            <button class="drink-cta" onclick="openReceita(${index}, 'resultado')">
+              Quero fazer esse drink
+              <i data-lucide="martini" style="width:12px;height:12px;"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function renderSelectionChips() {
+      const container = document.getElementById('resultado-selections');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (state.currentMode === 'ingredientes') {
+        state.selectedIngredients.forEach(id => {
+          const all  = [...INGREDIENTS_ALCOOLICOS, ...INGREDIENTS_NAO_ALCOOLICOS];
+          const item = all.find(x => x.id === id);
+          if (!item) return;
+          const chip = document.createElement('span');
+          chip.className = 'sel-chip';
+          chip.innerHTML = `${item.name}<button class="sel-chip-x" onclick="removeIngredientAndRefresh('${id}')" title="Remover">×</button>`;
+          container.appendChild(chip);
+        });
+      } else if (state.currentMode === 'sabor') {
+        state.selectedFlavors.forEach(id => {
+          const fl = FLAVORS.find(f => f.id === id);
+          if (!fl) return;
+          const chip = document.createElement('span');
+          chip.className = 'sel-chip';
+          chip.innerHTML = `${fl.emoji} ${fl.name}<button class="sel-chip-x" onclick="removeFlavorAndRefresh('${id}')" title="Remover">×</button>`;
+          container.appendChild(chip);
+        });
+      }
+    }
+
+    function removeIngredientAndRefresh(id) {
+      state.selectedIngredients.delete(id);
+      if (state.selectedIngredients.size === 0) { goTo('ingredientes'); return; }
+      showResultsByIngredients();
+    }
+
+    function removeFlavorAndRefresh(id) {
+      state.selectedFlavors.delete(id);
+      if (state.selectedFlavors.size === 0) { goTo('sabores'); return; }
+      showResultsByFlavor();
+    }
+
+
+    // ══════════════════════════
+    // RECEITA
+    // ══════════════════════════
+
+    function openReceita(drinkIndex, fromScreen) {
+      state.currentReceita = drinkIndex;
+      state.receitaFrom    = fromScreen || 'resultado';
+      renderReceita();
+      goTo('receita');
+    }
+
+    function renderReceita() {
+      const drink = DRINKS[state.currentReceita];
+      if (!drink) return;
+
+      const backBtn = document.getElementById('receita-back-btn');
+      if (backBtn) {
+        const from = state.receitaFrom;
+        const label = from === 'drinks' ? 'Todos os drinks' : 'Voltar';
+        backBtn.onclick = () => goTo(from);
+        backBtn.innerHTML = `<i data-lucide="arrow-left" style="width:14px;height:14px;"></i> ${label}`;
+      }
+
+      const layout = document.getElementById('receita-layout');
+      const isWide = window.innerWidth >= 768;
+      layout.style.gridTemplateColumns = isWide ? '1fr 1fr' : '1fr';
+
+      const imageHtml = drink.image
+        ? `<img src="${drink.image}" alt="${drink.name}" style="width:100%; border-radius:12px; object-fit:cover; max-height:480px; display:block;" />`
+        : `<div style="width:100%; border-radius:12px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; min-height:320px; font-size:6rem; opacity:0.2; color:#64748b;">◈</div>`;
+
+      const ingredientsHtml = drink.ingredients.map(ing => {
+        const ingObj = typeof ing === 'string' ? { id: ing, alcoolico: false } : ing;
+        const name   = getIngredientName(ingObj.id);
+        const qty    = ingObj.quantidade
+          ? `<span style="font-size:14px; font-weight:600; color:#374151; margin-right:8px; white-space:nowrap;">${ingObj.quantidade}</span>`
+          : '';
+        const badge  = ingObj.alcoolico
+          ? `<span class="badge badge-alc">Alcoólico</span>`
+          : `<span class="badge badge-nonalc">Sem álcool</span>`;
+        return `
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid #f1f5f9;">
+            <span style="font-size:14px; color:#374151; display:flex; align-items:center;">${qty}${name}</span>
+            ${badge}
+          </div>`;
+      }).join('');
+
+      const stepsHtml = drink.steps.map((step, i) => `
+        <div style="display:flex; gap:14px; align-items:flex-start; margin-bottom:20px;">
+          <div class="step-num">${String(i + 1).padStart(2, '0')}</div>
+          <p style="font-size:16px; color:#374151; line-height:1.7; margin:0; padding-top:5px;">${step}</p>
+        </div>
+      `).join('');
+
+      layout.innerHTML = `
+        <div>${imageHtml}</div>
+        <div>
+          <h1 class="drink-title" style="font-size:clamp(1.8rem,4vw,2.8rem); margin-bottom:16px;">${drink.name}</h1>
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:20px;">
+            ${renderFlavorTags(drink.flavors)}
+          </div>
+          <p style="font-size:16px; color:#4b5563; line-height:1.75; margin-bottom:28px;">${drink.description}</p>
+
+          <p class="section-label" style="margin-bottom:12px;">Ingredientes</p>
+          <div style="margin-bottom:28px;">${ingredientsHtml}</div>
+
+          <p class="section-label" style="margin-bottom:18px;">Modo de preparo</p>
+          <div>${stepsHtml}</div>
+        </div>
+      `;
+
+      lucide.createIcons();
+    }
+
+    function getIngredientName(id) {
+      const all   = [...INGREDIENTS_ALCOOLICOS, ...INGREDIENTS_NAO_ALCOOLICOS];
+      const found = all.find(x => x.id === id);
+      return found ? found.name : id;
+    }
+
+    function renderFlavorTags(flavorIds) {
+      return (flavorIds || []).map(fid => {
+        const fl = FLAVORS.find(f => f.id === fid);
+        return fl ? `<span class="flavor-tag">${fl.emoji} ${fl.name}</span>` : '';
+      }).join('');
+    }
+
+
+    // ══════════════════════════
+    // ADMIN
+    // ══════════════════════════
+
+    // ══════════════════════════
+    // ADMIN
+    // ══════════════════════════
+
+    let adminState = {
+      editingIndex: null,
+      ingredients:  [],        // [{ id, alcoolico, quantidade }]
+      flavors:      new Set(),
+    };
+
+    function adminInit() {
+      renderAdminDrinks();
+      renderAdminFlavors();
+      renderAdminIngredients();
+      lucide.createIcons();
+    }
+
+    function switchAdminSection(section) {
+      ['drinks', 'sabores', 'ingredientes'].forEach(s => {
+        document.getElementById('admin-section-' + s).classList.add('hidden');
+        document.getElementById('admin-nav-' + s).classList.remove('active');
+      });
+      document.getElementById('admin-section-' + section).classList.remove('hidden');
+      document.getElementById('admin-nav-' + section).classList.add('active');
+      lucide.createIcons();
+    }
+
+    // ── Drinks list ──
+
+    function renderAdminDrinks() {
+      const list = document.getElementById('admin-drinks-list');
+      if (!list) return;
+      if (DRINKS.length === 0) {
+        list.innerHTML = `<div class="admin-row"><span style="font-size:13px; color:#9ca3af;">Nenhum drink cadastrado.</span></div>`;
+        return;
+      }
+      list.innerHTML = DRINKS.map((d, i) => `
+        <div class="admin-row">
+          <div style="flex:1; min-width:0;">
+            <p style="font-family:'Lora',serif; font-size:14px; font-weight:600; color:#0f0f0f; margin:0 0 4px;">${d.name}</p>
+            <div style="display:flex; flex-wrap:wrap; gap:4px;">${renderFlavorTags(d.flavors)}</div>
+          </div>
+          <div style="display:flex; gap:8px; flex-shrink:0;">
+            <button class="btn btn-line" style="padding:7px 14px; font-size:10px;" onclick="adminEditDrink(${i})">Editar</button>
+            <button class="btn btn-line" style="padding:7px 14px; font-size:10px;" onclick="openReceita(${i}, 'admin')">Ver</button>
+            <button class="btn" style="padding:7px 14px; font-size:10px; background:#fee2e2; color:#dc2626; border:1.5px solid #fecaca;" onclick="adminDeleteDrink(${i})">Remover</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function adminDeleteDrink(index) {
+      if (!confirm(`Remover "${DRINKS[index].name}"?`)) return;
+      DRINKS.splice(index, 1);
+      renderAdminDrinks();
+    }
+
+    function adminEditDrink(index) {
+      adminOpenDrinkForm(index);
+    }
+
+    // ── Drink form ──
+
+    function adminOpenDrinkForm(editIndex = null) {
+      adminState.editingIndex = editIndex;
+      adminState.ingredients  = [];
+      adminState.flavors      = new Set();
+
+      const form  = document.getElementById('admin-drink-form');
+      const title = document.getElementById('admin-drink-form-title');
+
+      if (editIndex !== null) {
+        const d = DRINKS[editIndex];
+        title.textContent = 'Editar drink';
+        document.getElementById('admin-nome').value      = d.name;
+        document.getElementById('admin-descricao').value = d.description;
+        document.getElementById('admin-imagem').value    = d.image || '';
+        document.getElementById('admin-passos').value    = (d.steps || []).join('\n');
+        adminState.ingredients = d.ingredients.map(ing => ({ ...ing, quantidade: ing.quantidade || '' }));
+        adminState.flavors     = new Set(d.flavors);
+      } else {
+        title.textContent = 'Novo drink';
+        ['admin-nome','admin-descricao','admin-imagem','admin-passos']
+          .forEach(id => { document.getElementById(id).value = ''; });
+      }
+
+      form.classList.remove('hidden');
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      renderSelectedIngredients();
+      renderFlavorPicker();
+      lucide.createIcons();
+    }
+
+    function adminCloseDrinkForm() {
+      document.getElementById('admin-drink-form').classList.add('hidden');
+      document.getElementById('admin-ing-search').value = '';
+      document.getElementById('admin-ing-dropdown').style.display = 'none';
+      document.getElementById('admin-feedback').classList.add('hidden');
+    }
+
+    // ── Ingredient picker ──
+
+    function renderSelectedIngredients() {
+      const container = document.getElementById('admin-selected-ingredients');
+      if (!container) return;
+      if (adminState.ingredients.length === 0) {
+        container.innerHTML = `<span style="font-size:13px; color:#9ca3af; padding:6px 0;">Nenhum ingrediente selecionado</span>`;
+        return;
+      }
+      container.innerHTML = adminState.ingredients.map(ing => {
+        const name = getIngredientName(ing.id);
+        return `
+          <div class="admin-ing-chip">
+            <span>${name}</span>
+            <input class="admin-ing-qty" type="text" value="${ing.quantidade || ''}" placeholder="qtd"
+              oninput="adminSetIngredientQty('${ing.id}', this.value)" />
+            <button class="admin-ing-chip-remove" onclick="adminRemoveIngredient('${ing.id}')" title="Remover">×</button>
+          </div>`;
+      }).join('');
+    }
+
+    function renderIngredientSearch() {
+      const query    = (document.getElementById('admin-ing-search').value || '').trim().toLowerCase();
+      const dropdown = document.getElementById('admin-ing-dropdown');
+      const selected = new Set(adminState.ingredients.map(i => i.id));
+      const all      = [...INGREDIENTS_ALCOOLICOS, ...INGREDIENTS_NAO_ALCOOLICOS]
+        .filter(i => !selected.has(i.id))
+        .filter(i => !query || i.name.toLowerCase().includes(query))
+        .sort((a, b) => a.name.localeCompare(b.name, 'pt'));
+
+      dropdown.innerHTML = all.length === 0
+        ? `<div class="admin-dropdown-empty">Nenhum ingrediente encontrado</div>`
+        : all.map(i => `<div class="admin-dropdown-item" onmousedown="adminPickIngredient('${i.id}')">${i.name}</div>`).join('');
+
+      dropdown.style.display = 'block';
+    }
+
+    function adminPickIngredient(id) {
+      if (adminState.ingredients.find(i => i.id === id)) return;
+      const isAlc = INGREDIENTS_ALCOOLICOS.some(i => i.id === id);
+      adminState.ingredients.push({ id, alcoolico: isAlc, quantidade: '' });
+      document.getElementById('admin-ing-search').value = '';
+      document.getElementById('admin-ing-dropdown').style.display = 'none';
+      renderSelectedIngredients();
+    }
+
+    function adminRemoveIngredient(id) {
+      adminState.ingredients = adminState.ingredients.filter(i => i.id !== id);
+      renderSelectedIngredients();
+    }
+
+    function adminSetIngredientQty(id, qty) {
+      const ing = adminState.ingredients.find(i => i.id === id);
+      if (ing) ing.quantidade = qty;
+    }
+
+    // ── Flavor picker ──
+
+    function renderFlavorPicker() {
+      const container = document.getElementById('admin-flavor-picker');
+      if (!container) return;
+      container.innerHTML = FLAVORS.map(f => `
+        <button class="chip${adminState.flavors.has(f.id) ? ' selected' : ''}" onclick="adminToggleFlavor('${f.id}')">
+          ${f.emoji} ${f.name}
+        </button>
+      `).join('');
+    }
+
+    function adminToggleFlavor(id) {
+      adminState.flavors.has(id) ? adminState.flavors.delete(id) : adminState.flavors.add(id);
+      renderFlavorPicker();
+    }
+
+    // ── Save drink ──
+
+    function adminSaveDrink() {
+      const nome      = document.getElementById('admin-nome').value.trim();
+      const descricao = document.getElementById('admin-descricao').value.trim();
+      const imagem    = document.getElementById('admin-imagem').value.trim();
+      const passosRaw = document.getElementById('admin-passos').value.trim();
+
+      if (!nome) { showAdminFeedback('Insira um nome para o drink.', true); return; }
+
+      const drink = {
+        name:        nome,
+        description: descricao,
+        flavors:     [...adminState.flavors],
+        ingredients: adminState.ingredients,
+        steps:       passosRaw.split('\n').map(s => s.trim()).filter(Boolean),
+        image:       imagem,
+      };
+
+      if (adminState.editingIndex !== null) {
+        DRINKS[adminState.editingIndex] = drink;
+        showAdminFeedback(`"${nome}" atualizado com sucesso!`);
+      } else {
+        DRINKS.push(drink);
+        DRINKS.sort((a, b) => a.name.localeCompare(b.name, 'pt'));
+        showAdminFeedback(`"${nome}" adicionado com sucesso!`);
+      }
+
+      renderAdminDrinks();
+      adminCloseDrinkForm();
+    }
+
+    function showAdminFeedback(msg, isError = false) {
+      const el = document.getElementById('admin-feedback');
+      el.textContent = msg;
+      el.style.color = isError ? '#dc2626' : '#0891b2';
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 3500);
+    }
+
+    // ── Flavors CRUD ──
+
+    function renderAdminFlavors() {
+      const list = document.getElementById('admin-flavors-list');
+      if (!list) return;
+      if (FLAVORS.length === 0) {
+        list.innerHTML = `<div class="admin-row"><span style="font-size:13px; color:#9ca3af;">Nenhum sabor cadastrado.</span></div>`;
+        return;
+      }
+      list.innerHTML = FLAVORS.map((f, i) => `
+        <div class="admin-row">
+          <span style="font-size:1.4rem;">${f.emoji}</span>
+          <span style="flex:1; font-size:14px; font-weight:600; color:#0f0f0f; padding-left:12px;">${f.name}</span>
+          <button class="btn" style="padding:7px 14px; font-size:10px; background:#fee2e2; color:#dc2626; border:1.5px solid #fecaca;" onclick="adminDeleteFlavor(${i})">Remover</button>
+        </div>
+      `).join('');
+    }
+
+    function adminDeleteFlavor(index) {
+      if (!confirm(`Remover sabor "${FLAVORS[index].name}"?`)) return;
+      FLAVORS.splice(index, 1);
+      renderAdminFlavors();
+    }
+
+    function adminAddFlavor() {
+      const emoji = document.getElementById('admin-flavor-emoji').value.trim();
+      const name  = document.getElementById('admin-flavor-name').value.trim();
+      const fb    = document.getElementById('admin-flavor-feedback');
+
+      if (!name) {
+        fb.textContent = 'Insira um nome para o sabor.';
+        fb.style.color = '#dc2626';
+        fb.classList.remove('hidden');
+        setTimeout(() => fb.classList.add('hidden'), 3000);
+        return;
+      }
+
+      const id = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-');
+
+      if (FLAVORS.some(f => f.id === id)) {
+        fb.textContent = 'Esse sabor já existe.';
+        fb.style.color = '#dc2626';
+        fb.classList.remove('hidden');
+        setTimeout(() => fb.classList.add('hidden'), 3000);
+        return;
+      }
+
+      FLAVORS.push({ id, name, emoji: emoji || '🍹', description: '' });
+      FLAVORS.sort((a, b) => a.name.localeCompare(b.name, 'pt'));
+      renderAdminFlavors();
+
+      document.getElementById('admin-flavor-emoji').value = '';
+      document.getElementById('admin-flavor-name').value  = '';
+
+      fb.textContent = `"${name}" adicionado!`;
+      fb.style.color = '#0891b2';
+      fb.classList.remove('hidden');
+      setTimeout(() => fb.classList.add('hidden'), 3000);
+    }
+
+    // ── Ingredients CRUD ──
+
+    function renderAdminIngredients() {
+      const alcList    = document.getElementById('admin-alc-list');
+      const nonalcList = document.getElementById('admin-nonalc-list');
+
+      if (alcList) {
+        alcList.innerHTML = INGREDIENTS_ALCOOLICOS.length === 0
+          ? `<div class="admin-row"><span style="font-size:13px; color:#9ca3af;">Nenhum ingrediente.</span></div>`
+          : INGREDIENTS_ALCOOLICOS.map((ing, i) => `
+              <div class="admin-row">
+                <span style="flex:1; font-size:13px; color:#374151;">${ing.name}</span>
+                <button class="btn" style="padding:6px 12px; font-size:10px; background:#fee2e2; color:#dc2626; border:1.5px solid #fecaca;" onclick="adminDeleteIngredient('alcoolico', ${i})">×</button>
+              </div>`).join('');
+      }
+
+      if (nonalcList) {
+        nonalcList.innerHTML = INGREDIENTS_NAO_ALCOOLICOS.length === 0
+          ? `<div class="admin-row"><span style="font-size:13px; color:#9ca3af;">Nenhum ingrediente.</span></div>`
+          : INGREDIENTS_NAO_ALCOOLICOS.map((ing, i) => `
+              <div class="admin-row">
+                <span style="flex:1; font-size:13px; color:#374151;">${ing.name}</span>
+                <button class="btn" style="padding:6px 12px; font-size:10px; background:#fee2e2; color:#dc2626; border:1.5px solid #fecaca;" onclick="adminDeleteIngredient('nao-alcoolico', ${i})">×</button>
+              </div>`).join('');
+      }
+    }
+
+    function adminDeleteIngredient(type, index) {
+      const arr = type === 'alcoolico' ? INGREDIENTS_ALCOOLICOS : INGREDIENTS_NAO_ALCOOLICOS;
+      if (!confirm(`Remover "${arr[index].name}"?`)) return;
+      arr.splice(index, 1);
+      renderAdminIngredients();
+      renderChips();
+    }
+
+    function adminAddIngredient(type) {
+      const nameInput = document.getElementById(type === 'alcoolico' ? 'admin-new-alc-name' : 'admin-new-nonalc-name');
+      const name = nameInput.value.trim();
+      if (!name) return;
+      const id  = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-');
+      const arr = type === 'alcoolico' ? INGREDIENTS_ALCOOLICOS : INGREDIENTS_NAO_ALCOOLICOS;
+      if (arr.some(i => i.id === id)) return;
+      arr.push({ id, name });
+      arr.sort((a, b) => a.name.localeCompare(b.name, 'pt'));
+      nameInput.value = '';
+      renderAdminIngredients();
+      renderChips();
+    }
+
+
+    // ══════════════════════════
+    // INIT
+    // ══════════════════════════
+
+    (function init() {
+      renderChips();
+      renderFlavorsGrid();
+      lucide.createIcons();
+    })();
+
+  </script>
+</body>
+</html>
