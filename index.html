@@ -39,6 +39,7 @@
       font-weight: 800;
       color: #0f0f0f;
       line-height: 1.2;
+      flex: 1;
     }
     .serif-accent {
       font-family: 'Lora', serif;
@@ -63,7 +64,7 @@
     .btn {
       display: inline-flex; align-items: center; gap: 8px;
       font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
-      padding: 13px 26px; border-radius: 3px; cursor: pointer;
+      padding: 13px 26px; border-radius: 8px; cursor: pointer;
       transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.08s ease, opacity 0.08s ease;
       white-space: nowrap; line-height: 1; border: none; outline: none; text-decoration: none;
     }
@@ -111,7 +112,7 @@
     .drink-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
     .drink-card:active { transform: scale(0.98); opacity: 0.95; }
     .drink-card-grid {
-      flex-direction: row; border-radius: 12px; align-items: stretch;
+      flex-direction: row; border-radius: 12px; align-items: stretch; min-height: 180px;
     }
     .drink-card-image {
       width: 100%; aspect-ratio: 4/3; overflow: hidden;
@@ -124,10 +125,27 @@
     }
     .drink-card-image img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; display: block; }
     .drink-card-image-placeholder { font-size: 2.5rem; opacity: 0.2; color: #64748b; }
+    /* ── Result card image (renderResults only) ── */
+    .drink-image {
+      width: 180px;
+      min-width: 180px;
+      height: auto;
+      flex-shrink: 0;
+      overflow: hidden;
+      border-radius: 12px 0 0 12px;
+      display: flex;
+    }
+    .drink-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
     .drink-card-content {
       display: flex; flex-direction: column; padding: 18px 18px 20px; flex: 1;
     }
-    .drink-card-grid .drink-card-content { padding: 24px 28px; }
+    .drink-card-grid .drink-card-content { padding: 24px 28px; display: flex; flex-direction: column; justify-content: center; }
     .drink-compatibility {
       font-size: 11px; font-weight: 600; color: #16a34a; text-transform: uppercase;
       margin: 0 0 8px 0; letter-spacing: 0.1em;
@@ -194,7 +212,28 @@
       padding: 3px 8px; border-radius: 100px;
     }
     .badge-alc  { background: #fef3c7; color: #92400e; }
-    .badge-nonalc { background: #f0fdf4; color: #166534; }
+    .badge-nonalc { background: #f3e8ff; color: #6b21a8; white-space: nowrap; flex-shrink: 0; }
+    .badge-glass { background: #e0f2fe; color: #0369a1; }
+
+    /* ── Alcohol filter button group ── */
+    .btn-alc-group {
+      display: inline-flex;
+      background: transparent;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      padding: 4px;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .btn-alc {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+      padding: 10px 14px; cursor: pointer; background: transparent; color: #4b5563;
+      border: none; border-radius: 6px; outline: none;
+      transition: color 0.2s, background 0.2s, box-shadow 0.2s;
+      white-space: nowrap; line-height: 1;
+    }
+    .btn-alc.active { background: #e2e8f0; color: #083344; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+    .btn-alc:hover:not(.active) { color: #4b5563; }
 
     /* ── Step number ── */
     .step-num {
@@ -323,6 +362,25 @@
        RESPONSIVE — MOBILE  (≤ 768px)
     ══════════════════════════════════════════════════════════ */
 
+
+    /* ── Ingredient row grid (receita screen) ── */
+    .ingredient-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 16px;
+      padding: 11px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .ingredient-row > div,
+    .ingredient-row > span { min-width: 0; }
+    .glass-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+    }
+
     /* Base utility: CTA button group (used on all screens) */
     .cta-group { display: flex; flex-wrap: wrap; gap: 12px; }
 
@@ -344,9 +402,11 @@
 
       /* — Horizontal result card → vertical stack — */
       .drink-card-grid { flex-direction: column; border-radius: 16px; }
-      .drink-card-grid .drink-card-image {
-        flex: none; width: 100%; aspect-ratio: 4/3;
+      .drink-card-grid .drink-card-image,
+      .drink-card-grid .drink-image {
+        flex: none; width: 100%; height: auto; aspect-ratio: 4/3;
         min-width: unset; max-width: unset;
+        border-radius: 16px 16px 0 0;
         border-right: none !important;
         border-bottom: 1px solid #e2e8f0;
       }
@@ -391,6 +451,7 @@
 
       /* — Filter panel: full screen width — */
       #drinks-filter-panel { width: 100vw !important; }
+
 
     }
   </style>
@@ -466,6 +527,11 @@
           <i data-lucide="sliders-horizontal" style="width:13px;height:13px;"></i>
           Filtros
         </button>
+        <div class="btn-alc-group">
+          <button class="btn-alc active" data-val="todos" onclick="setAlcoolFilter('todos')">Todos</button>
+          <button class="btn-alc" data-val="alcool" onclick="setAlcoolFilter('alcool')">Com álcool</button>
+          <button class="btn-alc" data-val="sem" onclick="setAlcoolFilter('sem')">Sem álcool</button>
+        </div>
         <p id="drinks-count" class="section-label" style="margin:0 0 0 auto;"></p>
       </div>
 
@@ -607,7 +673,14 @@
       </div>
       <p id="resultado-subtitle" style="font-size:18px; color:#6b7280; margin:0 0 24px; line-height:1.7;"></p>
 
-      <div id="resultado-selections" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;"></div>
+      <div style="display:flex; flex-wrap:wrap; align-items:flex-start; gap:12px; margin-bottom:24px;">
+        <div id="resultado-selections" style="display:flex; flex-wrap:wrap; gap:8px; flex:1;"></div>
+        <div class="btn-alc-group">
+          <button class="btn-alc active" data-val="todos" onclick="setAlcoolFilter('todos')">Todos</button>
+          <button class="btn-alc" data-val="alcool" onclick="setAlcoolFilter('alcool')">Com álcool</button>
+          <button class="btn-alc" data-val="sem" onclick="setAlcoolFilter('sem')">Sem álcool</button>
+        </div>
+      </div>
 
       <div id="results-list" style="display:flex; flex-direction:column; gap:20px; margin-bottom:48px;"></div>
 
@@ -639,8 +712,9 @@
       </button>
 
       <div id="receita-layout" style="display:grid; gap:56px;"></div>
+      <div id="receita-glass"></div>
 
-      
+
       </div>
 
     </div>
@@ -859,7 +933,7 @@
       { id: 'aperol',        name: 'Aperol' },
       { id: 'cachaca',       name: 'Cachaça' },
       { id: 'campari',       name: 'Campari' },
-      { id: 'champanhe',     name: 'Champanhe' },
+      { id: 'espumante',     name: 'Espumante' },
       { id: 'gin',           name: 'Gin' },
       { id: 'rum',           name: 'Rum' },
       { id: 'tequila',       name: 'Tequila' },
@@ -871,187 +945,1238 @@
     ];
 
     const INGREDIENTS_NAO_ALCOOLICOS = [
-      { id: 'abacaxi',        name: 'Abacaxi' },
-      { id: 'acucar',         name: 'Açúcar' },
-      { id: 'agua-gas',       name: 'Água com gás' },
-      { id: 'agua-tonica',    name: 'Água tônica' },
-      { id: 'clara-ovo',      name: 'Clara de ovo' },
-      { id: 'gelo',           name: 'Gelo' },
-      { id: 'laranja',        name: 'Laranja' },
-      { id: 'leite-coco',     name: 'Leite de coco' },
-      { id: 'limao',          name: 'Limão' },
-      { id: 'mel',            name: 'Mel' },
-      { id: 'menta',          name: 'Menta' },
-      { id: 'morango',        name: 'Morango' },
-      { id: 'suco-abacaxi',   name: 'Suco de abacaxi' },
-      { id: 'suco-cranberry', name: 'Suco de cranberry' },
-      { id: 'suco-laranja',   name: 'Suco de laranja' },
+      { id: 'alecrim',             name: 'Alecrim' },
+      { id: 'acucar',              name: 'Açúcar' },
+      { id: 'agua-gas',            name: 'Água com gás' },
+      { id: 'agua-tonica',         name: 'Água tônica' },
+      { id: 'espuma-moscow-mule',  name: 'Espuma de Moscow Mule' },
+      { id: 'gelo',                name: 'Gelo' },
+      { id: 'ginger-beer',         name: 'Ginger Beer' },
+      { id: 'laranja',             name: 'Laranja' },
+      { id: 'limao-siciliano',     name: 'Limão siciliano' },
+      { id: 'limao-taiti',         name: 'Limão taiti' },
+      { id: 'manjericao',          name: 'Manjericão' },
+      { id: 'monin-cranberry',     name: 'Monin de cranberry' },
+      { id: 'morango',             name: 'Morango' },
+      { id: 'suco-laranja',        name: 'Suco de laranja' },
+      { id: 'xarope-acucar',       name: 'Xarope de açúcar' },
+      { id: 'monin-amora',         name: 'Xarope de amora' },
+      { id: 'zimbro',              name: 'Zimbro' },
     ];
 
     let FLAVORS = [
       { id: 'amargo',      name: 'Amargo',      emoji: '🍊', description: 'Complexo e sofisticado. Para paladares que apreciam profundidade.' },
+      { id: 'aromatico',   name: 'Aromático',   emoji: '🌸', description: 'Botânicos e ervas perfumadas em destaque. Drinks que se bebem também pelo nariz.' },
       { id: 'citrico',     name: 'Cítrico',     emoji: '🍋', description: 'Ácido, vivo e revigorante. Toque de limão, laranja ou fruta cítrica.' },
       { id: 'doce',        name: 'Doce',        emoji: '🍓', description: 'Suave, frutado e confortante. Drinks com açúcar, frutas e xaropes.' },
+      { id: 'equilibrado', name: 'Equilibrado', emoji: '⚖️', description: 'Acidez e dulçor em harmonia. Final limpo, sem excessos.' },
       { id: 'forte',       name: 'Forte',       emoji: '🥃', description: 'Encorpado, intenso e marcante. Destilados no protagonismo.' },
       { id: 'leve',        name: 'Leve',        emoji: '🫧', description: 'Suave, delicado e de baixa graduação. Perfeito para beber sem pressa.' },
       { id: 'refrescante', name: 'Refrescante', emoji: '🌿', description: 'Leve, aromático e perfeito para o calor. Menta, pepino e gás.' },
+      { id: 'classico',    name: 'Clássico',    emoji: '🍸', description: 'Receitas consagradas e referências da coquetelaria mundial.' },
+      { id: 'frutado',     name: 'Frutado',     emoji: '🍒', description: 'Frutas no protagonismo. Doce, vivo e cheio de cor.' },
+      { id: 'herbal',      name: 'Herbal',      emoji: '🌱', description: 'Ervas aromáticas em destaque. Complexidade botânica no copo.' },
+      { id: 'intenso',     name: 'Intenso',     emoji: '🔥', description: 'Sabores marcantes e encorpados. Drinks que deixam impressão.' },
+      { id: 'picante',     name: 'Picante',     emoji: '🌶️', description: 'Com um toque de ardência que anima o paladar.' },
+      { id: 'seco',        name: 'Seco',        emoji: '🥂', description: 'Sem açúcar residual. Final limpo e direto.' },
     ];
+
+    const GLASS_SVG = {
+      'copo alto':             'assets/glass-highball.svg',
+      'copo rocks':            'assets/glass-rocks.svg',
+      'taça':                  'assets/glass-coupe.svg',
+      'taça de coquetel':      'assets/glass-martini.svg',
+      'taça de vinho':         'assets/glass-wine.svg',
+      'Copo alto':             'assets/glass-highball.svg',
+      'Copo alto ou caneca':   'assets/glass-highball.svg',
+      'Copo baixo':            'assets/glass-rocks.svg',
+      'Copo baixo com gelo':   'assets/glass-rocks.svg',
+      'Copo grande':           'assets/glass-highball.svg',
+      'Copo médio':            'assets/glass-rocks.svg',
+      'Copo pequeno':          'assets/glass-rocks.svg',
+      'Copo pequeno sem gelo': 'assets/glass-rocks.svg',
+      'Qualquer copo médio':   'assets/glass-rocks.svg',
+      'Taça':                  'assets/glass-coupe.svg',
+    };
 
     let DRINKS = [
       {
+        name: 'Negroni',
+        description: 'Um dos drinks mais icônicos da coquetelaria, com equilíbrio entre amargor e dulçor. Forte, direto e com presença marcante.',
+        image: 'https://images.unsplash.com/photo-1626688445658-c948f32d68ba?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['amargo', 'intenso', 'classico'],
+        ingredients: [
+          { id: 'gin',     quantidade: '30 ml',             alcoolico: true  },
+          { id: 'vermute', quantidade: '30 ml',             alcoolico: true  },
+          { id: 'campari', quantidade: '30 ml',             alcoolico: true  },
+          { id: 'zimbro',  quantidade: '2 bagas (opcional)', alcoolico: false },
+          { id: 'gelo',    quantidade: 'a gosto',           alcoolico: false },
+        ],
+        steps: [
+          'Pressione levemente o zimbro no copo antes de adicionar os ingredientes.',
+          'Adicione bastante gelo.',
+          'Coloque o gin, o vermute e o campari.',
+          'Misture com uma colher por cerca de 20 segundos, até o drink ficar bem gelado.',
+          'Sirva no próprio copo.',
+          'Pressione a casca de laranja sobre o drink para liberar os óleos e coloque no copo.',
+        ],
+        glass: {
+          ideal: 'Copo baixo',
+          alternativa: 'Copo pequeno',
+          descricao: 'O copo baixo mantém o drink concentrado e reduz a diluição ao longo do tempo.',
+        },
+      },
+      {
+        name: 'Americano',
+        description: 'Versão mais leve do Negroni, com menor teor alcoólico e final mais refrescante, mantendo o perfil amargo.',
+        image: 'https://kitchenswagger.com/wp-content/uploads/2025/02/americano-cocktail.jpg',
+        flavors: ['amargo', 'refrescante', 'classico'],
+        ingredients: [
+          { id: 'campari',  quantidade: '30 ml',  alcoolico: true  },
+          { id: 'vermute',  quantidade: '30 ml',  alcoolico: true  },
+          { id: 'agua-gas', quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',     quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione o campari e o vermute.',
+          'Complete com água com gás.',
+          'Misture suavemente para não perder o gás.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          alternativa: 'Copo médio',
+          descricao: 'O copo maior permite adicionar gás sem perder equilíbrio.',
+        },
+      },
+      {
         name: 'Aperol Spritz',
-        description: 'Italiano, levemente amargo e muito elegante. Perfeito para ocasiões sociais.',
-        flavors: ['amargo', 'refrescante'],
+        description: 'Leve, borbulhante e levemente amargo, é um drink de abertura perfeito para momentos descontraídos.',
+        image: 'https://images.unsplash.com/photo-1585975776023-29a0dbc51407?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['refrescante', 'citrico', 'amargo', 'classico'],
         ingredients: [
-          { id: 'aperol',    alcoolico: true  },
-          { id: 'champanhe', alcoolico: true  },
-          { id: 'agua-gas',  alcoolico: false },
-          { id: 'gelo',      alcoolico: false },
+          { id: 'aperol',    quantidade: '60 ml',  alcoolico: true  },
+          { id: 'espumante', quantidade: '90 ml',  alcoolico: true  },
+          { id: 'agua-gas',  quantidade: '30 ml',  alcoolico: false },
+          { id: 'laranja',   quantidade: 'opcional', alcoolico: false },
+          { id: 'gelo',      quantidade: 'a gosto', alcoolico: false },
         ],
         steps: [
-          'Encha um copo tipo taça de vinho com gelo.',
-          'Adicione 90ml de Prosecco.',
-          'Adicione 60ml de Aperol.',
-          'Complete com um splash de água com gás (30ml).',
-          'Mexa suavemente e decore com uma rodela de laranja.',
+          'Encha o copo com bastante gelo.',
+          'Adicione o espumante.',
+          'Coloque o aperol.',
+          'Complete com água com gás.',
+          'Misture suavemente.',
+          'Adicione a fatia de laranja ao final para intensificar o aroma.',
         ],
-        image: '',
+        glass: {
+          ideal: 'Taça',
+          alternativa: 'Copo alto',
+          descricao: 'O formato ajuda a preservar o gás e valoriza a leveza do drink.',
+        },
       },
       {
-        name: 'Caipirinha',
-        description: 'O drink nacional mais famoso do Brasil. Simples, ácida e irresistível.',
-        flavors: ['citrico', 'forte'],
+        name: 'Moscow Mule',
+        description: 'Refrescante e equilibrado, com leve ardência do gengibre e final cítrico. Fácil de beber e sempre funciona.',
+        image: 'https://images.unsplash.com/photo-1594402009851-c13958f73e3f?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['refrescante', 'citrico', 'picante', 'classico'],
         ingredients: [
-          { id: 'cachaca', alcoolico: true  },
-          { id: 'limao',   alcoolico: false },
-          { id: 'acucar',  alcoolico: false },
-          { id: 'gelo',    alcoolico: false },
+          { id: 'vodka',              quantidade: '50 ml',             alcoolico: true  },
+          { id: 'limao-taiti',              quantidade: '15 ml',             alcoolico: false },
+          { id: 'ginger-beer',        quantidade: '100 ml',            alcoolico: false },
+          { id: 'espuma-moscow-mule', quantidade: 'a gosto (opcional)', alcoolico: false },
+          { id: 'gelo',               quantidade: 'a gosto',           alcoolico: false },
         ],
         steps: [
-          'Corte meio limão em 4 pedaços e coloque no copo.',
-          'Adicione 2 colheres de chá de açúcar.',
-          'Macere bem o limão com o açúcar.',
-          'Adicione gelo picado até encher o copo.',
-          'Despeje 60ml de cachaça e mexa bem.',
+          'Encha o copo com bastante gelo.',
+          'Adicione a vodka e o limão.',
+          'Complete com a ginger beer.',
+          'Misture suavemente com uma colher.',
+          'Adicione a espuma por cima ao final, sem misturar, para criar uma camada cremosa.',
         ],
-        image: '',
-      },
-      {
-        name: 'Cosmopolitan',
-        description: 'Elegante, levemente ácido e com linda cor rosada. Clássico dos anos 90.',
-        flavors: ['citrico', 'doce'],
-        ingredients: [
-          { id: 'vodka',          alcoolico: true  },
-          { id: 'triple-sec',     alcoolico: true  },
-          { id: 'suco-cranberry', alcoolico: false },
-          { id: 'limao',          alcoolico: false },
-        ],
-        steps: [
-          'Coloque todos os ingredientes em uma coqueteleira com gelo.',
-          'Agite vigorosamente por 15 segundos.',
-          'Coe em uma taça de martini gelada.',
-          'Decore com casca de limão flambada ou torcida.',
-        ],
-        image: '',
-      },
-      {
-        name: 'Gin Tônica',
-        description: 'Clássico e refrescante. O gin e a tônica se complementam em harmonia cítrica e levemente amarga.',
-        flavors: ['citrico', 'refrescante'],
-        ingredients: [
-          { id: 'gin',         alcoolico: true  },
-          { id: 'agua-tonica', alcoolico: false },
-          { id: 'limao',       alcoolico: false },
-          { id: 'gelo',        alcoolico: false },
-        ],
-        steps: [
-          'Encha um copo tipo taça ou long drink com gelo.',
-          'Adicione 50ml de gin.',
-          'Complete com água tônica gelada (150ml).',
-          'Esprema uma rodela de limão e use como decoração.',
-          'Mexa suavemente e sirva imediatamente.',
-        ],
-        image: '',
+        glass: {
+          ideal: 'Copo alto ou caneca',
+          alternativa: 'Qualquer copo médio',
+          descricao: 'O copo maior mantém o gás e sustenta melhor a espuma.',
+        },
       },
       {
         name: 'Mojito',
-        description: 'Cubano, aromático e perfeito para dias quentes. Menta fresca faz toda a diferença.',
-        flavors: ['refrescante', 'leve'],
+        description: 'Leve e aromático, com frescor imediato da hortelã e acidez equilibrada. Um dos drinks mais refrescantes que existem.',
+        image: 'https://images.unsplash.com/photo-1653542772393-71ffa417b1c4?q=80&w=1286&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['refrescante', 'herbal', 'citrico', 'classico'],
         ingredients: [
-          { id: 'rum',      alcoolico: true  },
-          { id: 'limao',    alcoolico: false },
-          { id: 'menta',    alcoolico: false },
-          { id: 'acucar',   alcoolico: false },
-          { id: 'agua-gas', alcoolico: false },
-          { id: 'gelo',     alcoolico: false },
+          { id: 'rum',           quantidade: '50 ml',        alcoolico: true  },
+          { id: 'limao-taiti',         quantidade: '20 ml',        alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',        alcoolico: false },
+          { id: 'menta',         quantidade: 'folhas a gosto', alcoolico: false },
+          { id: 'agua-gas',      quantidade: 'a gosto',      alcoolico: false },
+          { id: 'gelo',          quantidade: 'a gosto',      alcoolico: false },
         ],
         steps: [
-          'Coloque folhas de hortelã e açúcar em um copo.',
-          'Esprema o suco de 1 limão sobre a mistura.',
-          'Macere levemente a hortelã para liberar o aroma.',
-          'Adicione gelo picado.',
-          'Adicione 50ml de rum branco.',
-          'Complete com água com gás e mexa delicadamente.',
-          'Decore com ramo de hortelã e rodela de limão.',
+          'Bata levemente a hortelã nas mãos antes de usar para liberar aroma sem amargar.',
+          'Pressione levemente com uma colher para liberar aroma (sem triturar demais).',
+          'Adicione gelo.',
+          'Coloque o rum.',
+          'Complete com água com gás.',
+          'Misture suavemente.',
         ],
-        image: '',
+        glass: {
+          ideal: 'Copo alto',
+          alternativa: 'Copo médio',
+          descricao: 'O copo alto permite acomodar gelo, ervas e gás sem comprometer o drink.',
+        },
       },
       {
-        name: 'Negroni',
-        description: 'Sofisticado e encorpado. Para quem aprecia a complexidade do amargo.',
-        flavors: ['amargo', 'forte'],
+        name: 'Cosmopolitan',
+        description: 'Elegante e equilibrado, com acidez marcante e leve dulçor frutado. Um clássico moderno com perfil sofisticado.',
+        image: 'https://images.unsplash.com/photo-1632987788901-0c090e5f4eaf?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['citrico', 'frutado', 'classico'],
         ingredients: [
-          { id: 'gin',     alcoolico: true  },
-          { id: 'campari', alcoolico: true  },
-          { id: 'vermute', alcoolico: true  },
-          { id: 'gelo',    alcoolico: false },
+          { id: 'vodka',           quantidade: '50 ml',  alcoolico: true  },
+          { id: 'monin-cranberry', quantidade: '25 ml',  alcoolico: false },
+          { id: 'limao-siciliano',           quantidade: '15 ml',  alcoolico: false },
+          { id: 'triple-sec',      quantidade: '15 ml',  alcoolico: true  },
+          { id: 'gelo',            quantidade: 'a gosto', alcoolico: false },
         ],
         steps: [
-          'Coloque gelo em um copo rocks.',
-          'Adicione 30ml de gin, 30ml de Campari e 30ml de vermute doce.',
-          'Mexa por 30 segundos com colher de bar.',
-          'Decore com uma casca de laranja expressa sobre o drink.',
+          'Encha a coqueteleira com gelo.',
+          'Adicione todos os ingredientes.',
+          'Agite com força por 10–15 segundos.',
+          'Segure o gelo e despeje apenas o líquido no copo.',
         ],
-        image: '',
+        glass: {
+          ideal: 'Taça',
+          alternativa: 'Copo pequeno sem gelo',
+          descricao: 'Servir sem gelo mantém a textura leve e evita diluição.',
+        },
       },
       {
-        name: 'Piña Colada',
-        description: 'Tropical, cremoso e irresistível. Um abraço em forma de bebida.',
-        flavors: ['doce', 'leve'],
+        name: 'Bramble',
+        description: 'Começa cítrico e fresco, mas ganha profundidade com a amora. Um drink que evolui ao longo do gole.',
+        image: 'https://embed-ssl.wistia.com/deliveries/89784a18a1f108f3bccc708ad9ab6416.jpg?image_crop_resized=1280x800',
+        flavors: ['citrico', 'frutado', 'classico'],
         ingredients: [
-          { id: 'rum',          alcoolico: true  },
-          { id: 'leite-coco',   alcoolico: false },
-          { id: 'suco-abacaxi', alcoolico: false },
-          { id: 'gelo',         alcoolico: false },
+          { id: 'gin',           quantidade: '50 ml',  alcoolico: true  },
+          { id: 'limao-taiti',         quantidade: '25 ml',  alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',  alcoolico: false },
+          { id: 'monin-amora',   quantidade: '10 ml',  alcoolico: false },
+          { id: 'gelo',          quantidade: 'picado', alcoolico: false },
         ],
         steps: [
-          'Coloque 50ml de rum, 80ml de leite de coco e 120ml de suco de abacaxi no liquidificador.',
-          'Adicione 1 xícara de gelo.',
-          'Bata até ficar cremoso e homogêneo.',
-          'Despeje em um copo alto.',
-          'Decore com uma fatia de abacaxi.',
+          'Coloque gelo na coqueteleira.',
+          'Adicione gin, limão e xarope.',
+          'Agite por 10–15 segundos.',
+          'Despeje o líquido em um copo com gelo novo.',
+          'Finalize com o xarope de amora por cima.',
         ],
-        image: '',
+        glass: {
+          ideal: 'Copo baixo com gelo',
+          alternativa: 'Copo médio',
+          descricao: 'O gelo no copo permite que o drink evolua com o tempo.',
+        },
       },
       {
-        name: 'Whisky Sour',
-        description: 'Equilibrado entre o doce e o ácido, com final suave da clara de ovo.',
-        flavors: ['amargo', 'citrico'],
+        name: 'Gin Tônica',
+        description: 'Simples e versátil, com frescor imediato e leve amargor da tônica. Base para inúmeras variações.',
+        image: 'https://images.unsplash.com/photo-1453824979084-c8fd42932378?q=80&w=1760&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['refrescante', 'citrico'],
         ingredients: [
-          { id: 'whisky',    alcoolico: true  },
-          { id: 'limao',     alcoolico: false },
-          { id: 'acucar',    alcoolico: false },
-          { id: 'clara-ovo', alcoolico: false },
+          { id: 'gin',         quantidade: '50 ml',             alcoolico: true  },
+          { id: 'agua-tonica', quantidade: 'a gosto',           alcoolico: false },
+          { id: 'zimbro',      quantidade: '2 bagas (opcional)', alcoolico: false },
+          { id: 'gelo',        quantidade: 'a gosto',           alcoolico: false },
         ],
         steps: [
-          'Adicione 60ml de whisky, 30ml de suco de limão e 15ml de xarope simples na coqueteleira.',
-          'Adicione 1 clara de ovo.',
-          'Agite SEM gelo por 10 segundos (dry shake).',
-          'Adicione gelo e agite novamente por 15 segundos.',
-          'Coe em copo rocks com um grande cubo de gelo.',
-          'Finalize com 2–3 gotas de Angostura bitters.',
+          'Pressione levemente o zimbro antes de adicionar o gin para intensificar o aroma.',
+          'Adicione bastante gelo.',
+          'Coloque o gin.',
+          'Complete com água tônica.',
+          'Misture suavemente.',
         ],
-        image: '',
+        glass: {
+          ideal: 'Copo grande',
+          alternativa: 'Taça',
+          descricao: 'Mais espaço permite melhor circulação dos aromas.',
+        },
+      },
+      {
+        name: 'Tom Collins',
+        description: 'Leve, borbulhante e extremamente refrescante, com acidez em destaque.',
+        image: 'https://static-prod.remymartin.com/app/uploads/2025/02/remy-martin-cocktails-royal-tom-collins-1x1-250220-01.jpg',
+        flavors: ['refrescante', 'citrico', 'classico'],
+        ingredients: [
+          { id: 'gin',           quantidade: '50 ml',  alcoolico: true  },
+          { id: 'limao-siciliano',         quantidade: '25 ml',  alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',  alcoolico: false },
+          { id: 'agua-gas',      quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',          quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque gelo na coqueteleira.',
+          'Adicione gin, limão e xarope.',
+          'Agite por 10–15 segundos.',
+          'Despeje apenas o líquido no copo.',
+          'Complete com água com gás.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          alternativa: 'Copo médio',
+          descricao: 'O formato ajuda a manter o gás e o frescor.',
+        },
+      },
+      {
+        name: 'White Lady',
+        description: 'Leve e elegante, com perfil cítrico bem definido e final seco.',
+        image: 'https://images.unsplash.com/photo-1687852310878-654b4f39e8cd?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['citrico', 'seco', 'classico'],
+        ingredients: [
+          { id: 'gin',        quantidade: '50 ml',  alcoolico: true  },
+          { id: 'limao-siciliano',      quantidade: '20 ml',  alcoolico: false },
+          { id: 'triple-sec', quantidade: '20 ml',  alcoolico: true  },
+          { id: 'gelo',       quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque gelo na coqueteleira.',
+          'Adicione todos os ingredientes.',
+          'Agite por 10–15 segundos.',
+          'Despeje apenas o líquido no copo.',
+        ],
+        glass: {
+          ideal: 'Taça',
+          alternativa: 'Copo pequeno',
+          descricao: 'A taça valoriza o aroma e a experiência.',
+        },
+      },
+      {
+        name: 'Kamikaze',
+        description: 'Direto, ácido e marcante. Um drink simples com impacto imediato.',
+        image: 'https://staticcookist.akamaized.net/wp-content/uploads/sites/22/2021/04/kamikaze-cocktail-3-1.jpg',
+        flavors: ['citrico', 'intenso', 'classico'],
+        ingredients: [
+          { id: 'vodka',      quantidade: '50 ml',  alcoolico: true  },
+          { id: 'limao-taiti',      quantidade: '20 ml',  alcoolico: false },
+          { id: 'triple-sec', quantidade: '20 ml',  alcoolico: true  },
+          { id: 'gelo',       quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque gelo na coqueteleira.',
+          'Adicione os ingredientes.',
+          'Agite por 10–15 segundos.',
+          'Despeje apenas o líquido no copo.',
+        ],
+        glass: {
+          ideal: 'Copo pequeno',
+          descricao: 'Mantém a intensidade do drink.',
+        },
+      },
+      {
+        name: 'Margarita Adaptado',
+        description: 'Originalmente feito com tequila, essa versão mantém a base cítrica e vibrante, com equilíbrio entre acidez e dulçor. Continua leve, direto e fácil de beber.',
+        image: 'https://images.unsplash.com/photo-1655546837806-76a6dd54ee2b?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['citrico', 'refrescante', 'classico'],
+        ingredients: [
+          { id: 'vodka',      quantidade: '50 ml', alcoolico: true  },
+          { id: 'limao-taiti',      quantidade: '25 ml', alcoolico: false },
+          { id: 'triple-sec', quantidade: '20 ml', alcoolico: true  },
+          { id: 'gelo',       quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha a coqueteleira com gelo.',
+          'Adicione todos os ingredientes.',
+          'Agite com força por 10 a 15 segundos.',
+          'Segure o gelo com a tampa.',
+          'Despeje apenas o líquido no copo.',
+        ],
+        glass: {
+          ideal: 'Copo baixo',
+          alternativa: 'Copo médio',
+          descricao: 'O copo menor mantém o drink mais concentrado e valoriza o perfil cítrico.',
+        },
+      },
+      {
+        name: 'Old Fashioned Adaptado',
+        description: 'Versão adaptada do clássico à base de whisky, aqui com rum, trazendo um perfil mais suave e levemente adocicado, mas ainda concentrado e estruturado.',
+        image: 'https://images.unsplash.com/photo-1638884904408-fbc6ab0c200f?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['intenso', 'doce', 'classico'],
+        ingredients: [
+          { id: 'rum',          quantidade: '50 ml',   alcoolico: true  },
+          { id: 'xarope-acucar', quantidade: '10 ml',  alcoolico: false },
+          { id: 'laranja',      quantidade: '1 casca', alcoolico: false },
+          { id: 'gelo',         quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque o xarope e a casca de laranja no copo.',
+          'Pressione a casca de laranja no copo para liberar os óleos antes de adicionar o gelo.',
+          'Adicione gelo.',
+          'Coloque o rum.',
+          'Misture lentamente por cerca de 20 segundos.',
+        ],
+        glass: {
+          ideal: 'Copo baixo',
+          alternativa: 'Copo pequeno',
+          descricao: 'O copo baixo mantém o drink concentrado e reduz a diluição.',
+        },
+      },
+      {
+        name: 'Manhattan Adaptado',
+        description: 'Adaptação do clássico com whisky, substituído por rum, resultando em um drink mais leve, mas ainda elegante e bem estruturado.',
+        image: 'https://images.unsplash.com/photo-1665609951801-ff3f25c0f0f1?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['intenso', 'aromatico', 'classico'],
+        ingredients: [
+          { id: 'rum',     quantidade: '50 ml', alcoolico: true  },
+          { id: 'vermute', quantidade: '30 ml', alcoolico: true  },
+          { id: 'gelo',    quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque gelo na coqueteleira.',
+          'Adicione o rum e o vermute.',
+          'Agite suavemente por cerca de 10 a 15 segundos.',
+          'Segure o gelo e despeje apenas o líquido no copo.',
+        ],
+        glass: {
+          ideal: 'Copo pequeno sem gelo',
+          alternativa: 'Taça',
+          descricao: 'Servir sem gelo mantém o drink mais elegante e concentrado.',
+        },
+      },
+      {
+        name: 'Boulevardier Adaptado',
+        description: 'Versão original leva whisky, mas com rum mantém estrutura semelhante ao Negroni, com leve dulçor e menor agressividade alcoólica.',
+        image: 'https://images.unsplash.com/photo-1641919089328-5d5063828c4f?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['amargo', 'intenso', 'classico'],
+        ingredients: [
+          { id: 'rum',     quantidade: '30 ml', alcoolico: true  },
+          { id: 'vermute', quantidade: '30 ml', alcoolico: true  },
+          { id: 'campari', quantidade: '30 ml', alcoolico: true  },
+          { id: 'gelo',    quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione todos os ingredientes.',
+          'Misture por cerca de 20 segundos.',
+          'Sirva no próprio copo.',
+        ],
+        glass: {
+          ideal: 'Copo baixo',
+          alternativa: 'Copo pequeno',
+          descricao: 'Mantém o drink concentrado e com pouca diluição.',
+        },
+      },
+      {
+        name: 'Daiquiri Adaptado',
+        description: 'Versão adaptada do clássico cubano, mantendo a base de rum, com preparo direto e simples.',
+        image: 'https://so-sour.com/wp-content/uploads/2024/12/daiquiri.jpg',
+        flavors: ['citrico', 'leve', 'classico'],
+        ingredients: [
+          { id: 'rum',           quantidade: '50 ml', alcoolico: true  },
+          { id: 'limao-taiti',         quantidade: '25 ml', alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml', alcoolico: false },
+          { id: 'gelo',          quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque gelo na coqueteleira.',
+          'Adicione todos os ingredientes.',
+          'Agite bem por 10 a 15 segundos.',
+          'Segure o gelo e despeje apenas o líquido no copo.',
+        ],
+        glass: {
+          ideal: 'Taça',
+          alternativa: 'Copo pequeno sem gelo',
+          descricao: 'Servir sem gelo mantém o drink leve e equilibrado.',
+        },
+      },
+      {
+        name: 'Strawberry Mojito',
+        description: 'Uma versão mais suave e aromática do mojito, onde o morango reduz a acidez e traz um dulçor natural que deixa o drink mais fácil de beber.',
+        image: 'https://thesocialsipper.com/wp-content/uploads/2021/09/web_The-Social-Sipper-Strawberry-Mojito-3.jpg',
+        flavors: ['refrescante', 'frutado', 'herbal'],
+        ingredients: [
+          { id: 'rum',          quantidade: '50 ml',   alcoolico: true  },
+          { id: 'morango',      quantidade: 'a gosto', alcoolico: false },
+          { id: 'limao-taiti',        quantidade: '20 ml',   alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',  alcoolico: false },
+          { id: 'menta',        quantidade: 'a gosto', alcoolico: false },
+          { id: 'agua-gas',     quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',         quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque os morangos, a hortelã, o limão e o xarope no copo.',
+          'Amasse levemente os morangos e pressione a hortelã levemente, evitando triturar para não amargar.',
+          'Adicione gelo.',
+          'Coloque o rum.',
+          'Complete com água com gás.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          alternativa: 'Copo médio',
+          descricao: 'O copo alto permite acomodar fruta, ervas e gás sem perder equilíbrio.',
+        },
+      },
+      {
+        name: 'Strawberry Mule',
+        description: 'Combina o frescor do morango com o leve ardor do gengibre, criando um drink equilibrado e fácil de beber.',
+        image: 'https://thetoastedpinenut.com/wp-content/uploads/2019/07/strawberry-basil-mules-2.jpg',
+        flavors: ['refrescante', 'frutado', 'picante'],
+        ingredients: [
+          { id: 'vodka',              quantidade: '50 ml',   alcoolico: true  },
+          { id: 'morango',            quantidade: 'a gosto', alcoolico: false },
+          { id: 'limao-taiti',              quantidade: '15 ml',   alcoolico: false },
+          { id: 'ginger-beer',        quantidade: '100 ml',  alcoolico: false },
+          { id: 'espuma-moscow-mule', quantidade: 'opcional', alcoolico: false },
+          { id: 'gelo',               quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque os morangos no copo e pressione levemente.',
+          'Adicione gelo.',
+          'Coloque a vodka e o limão.',
+          'Complete com ginger beer.',
+          'Misture suavemente.',
+          'Adicione a espuma por cima ao final, sem misturar, para criar uma camada cremosa.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Mantém o gás e a estrutura do drink.',
+        },
+      },
+      {
+        name: 'Strawberry Sour',
+        description: 'Mais macio que o sour tradicional, com o morango trazendo corpo e suavizando a acidez.',
+        image: 'https://seppeltsfieldroaddistillers.com.au/cdn/shop/articles/Seppeltsfield_Road_Distillers_Strawberry_Sour.jpg?v=1701652084',
+        flavors: ['frutado', 'citrico', 'equilibrado'],
+        ingredients: [
+          { id: 'vodka',        quantidade: '50 ml',   alcoolico: true  },
+          { id: 'morango',      quantidade: 'a gosto', alcoolico: false },
+          { id: 'limao-taiti',        quantidade: '25 ml (siciliano como opcional)',   alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',  alcoolico: false },
+          { id: 'gelo',         quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque os morangos, limão e xarope na coqueteleira.',
+          'Pressione levemente os morangos.',
+          'Adicione gelo e a vodka.',
+          'Agite por 10 a 15 segundos.',
+          'Segure o gelo e despeje apenas o líquido no copo.',
+        ],
+        glass: {
+          ideal: 'Copo pequeno',
+          alternativa: 'Taça',
+          descricao: 'Servir sem gelo mantém o equilíbrio do drink.',
+        },
+      },
+      {
+        name: 'Cranberry Mule',
+        description: 'Leve e aromático, com o cranberry trazendo um toque ácido e frutado que equilibra o gengibre.',
+        image: 'https://cdn.shopify.com/s/files/1/0753/2642/3315/t/6/assets/cranberry_moscow_mule_cocktail-1702236864726_1000x.jpg?v=1702236866',
+        flavors: ['refrescante', 'frutado', 'citrico'],
+        ingredients: [
+          { id: 'vodka',              quantidade: '50 ml',   alcoolico: true  },
+          { id: 'monin-cranberry',    quantidade: '20 ml',   alcoolico: false },
+          { id: 'limao-taiti',              quantidade: '15 ml',   alcoolico: false },
+          { id: 'ginger-beer',        quantidade: '100 ml',  alcoolico: false },
+          { id: 'espuma-moscow-mule', quantidade: 'opcional', alcoolico: false },
+          { id: 'gelo',               quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione vodka, cranberry e limão.',
+          'Complete com ginger beer.',
+          'Misture suavemente.',
+          'Adicione a espuma por cima ao final, sem misturar, para criar uma camada cremosa.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Ajuda a manter o gás e acomodar a espuma.',
+        },
+      },
+      {
+        name: 'Cranberry Sour',
+        description: 'Mais leve e direto, com acidez mais evidente e final limpo.',
+        image: 'https://www.joyfulhealthyeats.com/wp-content/uploads/2022/11/Spiced-Cranberry-Whiskey-Sour-web-2.jpg',
+        flavors: ['citrico', 'frutado', 'equilibrado'],
+        ingredients: [
+          { id: 'vodka',           quantidade: '50 ml',   alcoolico: true  },
+          { id: 'monin-cranberry', quantidade: '20 ml',   alcoolico: false },
+          { id: 'limao-taiti',           quantidade: '25 ml',   alcoolico: false },
+          { id: 'xarope-acucar',   quantidade: '10 ml',   alcoolico: false },
+          { id: 'gelo',            quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque gelo na coqueteleira.',
+          'Adicione todos os ingredientes.',
+          'Agite por 10 a 15 segundos.',
+          'Despeje apenas o líquido no copo.',
+        ],
+        glass: {
+          ideal: 'Copo pequeno',
+          alternativa: 'Taça',
+          descricao: 'Mantém o equilíbrio inicial sem diluição.',
+        },
+      },
+      {
+        name: 'Cranberry Spritz',
+        description: 'Leve e borbulhante, com perfil mais suave e frutado que o aperol spritz.',
+        image: 'https://i0.wp.com/www.certifiedpastryaficionado.com/wp-content/uploads/2019/11/Cranberry-Orange-Aperol-Spritz_IMG_7038.jpg?fit=800%2C1200',
+        flavors: ['refrescante', 'frutado', 'leve'],
+        ingredients: [
+          { id: 'monin-cranberry', quantidade: '30 ml',  alcoolico: false },
+          { id: 'espumante',       quantidade: '90 ml',  alcoolico: true  },
+          { id: 'agua-gas',        quantidade: '30 ml',  alcoolico: false },
+          { id: 'gelo',            quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione o espumante.',
+          'Coloque o cranberry.',
+          'Complete com água com gás.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Taça',
+          alternativa: 'Copo alto',
+          descricao: 'Ajuda a preservar o gás e valorizar o aroma.',
+        },
+      },
+      {
+        name: 'Amora Mule',
+        description: 'Mais encorpado e levemente mais doce, com contraste entre fruta e gengibre.',
+        image: 'https://realfood.tesco.com/media/images/RFO-1400x919-Blackberry-Moscow-Mule-1b5f6658-81fb-4f62-bc6a-8effd4ba9846-0-1400x919.jpg',
+        flavors: ['frutado', 'refrescante', 'picante'],
+        ingredients: [
+          { id: 'vodka',              quantidade: '50 ml',   alcoolico: true  },
+          { id: 'monin-amora',        quantidade: '20 ml',   alcoolico: false },
+          { id: 'limao-taiti',              quantidade: '15 ml',   alcoolico: false },
+          { id: 'ginger-beer',        quantidade: '100 ml',  alcoolico: false },
+          { id: 'espuma-moscow-mule', quantidade: 'opcional', alcoolico: false },
+          { id: 'gelo',               quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione vodka, amora e limão.',
+          'Complete com ginger beer.',
+          'Misture suavemente.',
+          'Adicione a espuma por cima ao final, sem misturar, para criar uma camada cremosa.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Mantém equilíbrio entre gás e sabor.',
+        },
+      },
+      {
+        name: 'Amora Sour',
+        description: 'Mais encorpado e com dulçor mais evidente, mantendo a base ácida do sour.',
+        image: 'https://media.cuisineathome.com/images/Blackberry-Sour-Lead-0.jpg',
+        flavors: ['frutado', 'citrico', 'equilibrado'],
+        ingredients: [
+          { id: 'gin',           quantidade: '50 ml',   alcoolico: true  },
+          { id: 'monin-amora',   quantidade: '20 ml',   alcoolico: false },
+          { id: 'limao-taiti',         quantidade: '25 ml',   alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '10 ml',   alcoolico: false },
+          { id: 'gelo',          quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque gelo na coqueteleira.',
+          'Adicione os ingredientes.',
+          'Agite por 10 a 15 segundos.',
+          'Despeje apenas o líquido.',
+        ],
+        glass: {
+          ideal: 'Copo pequeno',
+          descricao: 'Mantém o drink concentrado.',
+        },
+      },
+      {
+        name: 'Bramble de Morango',
+        description: 'Versão mais suave do bramble, com morango trazendo dulçor e reduzindo a acidez.',
+        image: 'https://images.unsplash.com/photo-1645496760934-dcb301e909ce?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['frutado', 'citrico'],
+        ingredients: [
+          { id: 'gin',           quantidade: '50 ml',   alcoolico: true  },
+          { id: 'limao-taiti',         quantidade: '25 ml',   alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',   alcoolico: false },
+          { id: 'morango',       quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',          quantidade: 'picado',  alcoolico: false },
+        ],
+        steps: [
+          'Bata gin, limão e xarope na coqueteleira.',
+          'Despeje em copo com gelo novo.',
+          'Finalize com morango levemente amassado.',
+        ],
+        glass: {
+          ideal: 'Copo baixo com gelo',
+          descricao: 'Permite evolução do drink conforme dilui.',
+        },
+      },
+      {
+        name: 'Gin Basil Smash',
+        description: 'Aromático e fresco, com o manjericão como protagonista. Um clássico moderno que foge do óbvio e traz muita identidade.',
+        image: 'https://images.unsplash.com/photo-1678358596824-89a0c360743f?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['herbal', 'citrico', 'refrescante', 'classico'],
+        ingredients: [
+          { id: 'gin',           quantidade: '50 ml',   alcoolico: true  },
+          { id: 'manjericao',    quantidade: 'a gosto', alcoolico: false },
+          { id: 'limao-siciliano',         quantidade: '25 ml',   alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',   alcoolico: false },
+          { id: 'gelo',          quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque o manjericão, o limão e o xarope na coqueteleira.',
+          'Pressione o manjericão levemente para liberar aroma sem deixar sabor excessivo.',
+          'Adicione gelo e o gin.',
+          'Agite por 10 a 15 segundos.',
+          'Segure o gelo e despeje apenas o líquido no copo.',
+          'Se usar zimbro, pressione junto com o manjericão para reforçar o aroma do gin.',
+        ],
+        glass: {
+          ideal: 'Copo baixo',
+          alternativa: 'Copo médio',
+          descricao: 'O copo ajuda a concentrar o aroma herbal próximo ao nariz.',
+        },
+      },
+      {
+        name: 'Southside',
+        description: 'Leve e extremamente refrescante, com perfil semelhante ao mojito, porém mais limpo e direto.',
+        image: 'https://thedrinkblog.com/wp-content/uploads/2018/06/tdb-southside-fizz-1500x1000.jpg',
+        flavors: ['refrescante', 'herbal', 'citrico', 'classico'],
+        ingredients: [
+          { id: 'gin',           quantidade: '50 ml',   alcoolico: true  },
+          { id: 'menta',         quantidade: 'a gosto', alcoolico: false },
+          { id: 'limao-siciliano',         quantidade: '25 ml',   alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',   alcoolico: false },
+          { id: 'gelo',          quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque hortelã, limão e xarope na coqueteleira.',
+          'Pressione levemente a hortelã para liberar aroma, sem triturar.',
+          'Adicione gelo e o gin.',
+          'Agite por 10 a 15 segundos.',
+          'Despeje apenas o líquido no copo.',
+        ],
+        glass: {
+          ideal: 'Taça',
+          alternativa: 'Copo pequeno',
+          descricao: 'Servir sem gelo valoriza a leveza e o frescor.',
+        },
+      },
+      {
+        name: 'Strawberry Basil Smash',
+        description: 'Combinação intensa de morango e manjericão, trazendo dulçor natural com aroma herbal marcante.',
+        image: 'https://images.unsplash.com/photo-1591634447477-5197ab46ce13?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['frutado', 'herbal', 'refrescante'],
+        ingredients: [
+          { id: 'gin',           quantidade: '50 ml',   alcoolico: true  },
+          { id: 'morango',       quantidade: 'a gosto', alcoolico: false },
+          { id: 'manjericao',    quantidade: 'a gosto', alcoolico: false },
+          { id: 'limao-taiti',         quantidade: '25 ml',   alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '10 ml',   alcoolico: false },
+          { id: 'gelo',          quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque morango, manjericão, limão e xarope na coqueteleira.',
+          'Pressione o manjericão junto com o morango de forma leve para equilibrar aroma e sabor.',
+          'Adicione gelo e o gin.',
+          'Agite por 10 a 15 segundos.',
+          'Despeje apenas o líquido.',
+        ],
+        glass: {
+          ideal: 'Copo baixo',
+          descricao: 'Mantém o drink concentrado e aromático.',
+        },
+      },
+      {
+        name: 'Gin Tônica com Alecrim',
+        description: 'Uma variação mais sofisticada da gin tônica, com o alecrim trazendo um aroma marcante e levemente resinoso.',
+        image: 'https://blog.biglar.com.br/wp-content/uploads/2021/12/iStock-1310029561.jpg',
+        flavors: ['herbal', 'refrescante', 'aromatico'],
+        ingredients: [
+          { id: 'gin',         quantidade: '50 ml',   alcoolico: true  },
+          { id: 'alecrim',     quantidade: '1 ramo',  alcoolico: false },
+          { id: 'agua-tonica', quantidade: 'a gosto', alcoolico: false },
+          { id: 'zimbro',      quantidade: 'opcional', alcoolico: false },
+          { id: 'gelo',        quantidade: 'bastante', alcoolico: false },
+        ],
+        steps: [
+          'Pressione levemente o alecrim ou aqueça com as mãos antes de usar para liberar aroma.',
+          'Se quiser, adicione o zimbro e pressione também.',
+          'Adicione bastante gelo.',
+          'Coloque o gin.',
+          'Complete com água tônica.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo grande',
+          alternativa: 'Taça',
+          descricao: 'O espaço ajuda na liberação dos aromas.',
+        },
+      },
+      {
+        name: 'Mojito com Manjericão',
+        description: 'Uma releitura do mojito com perfil mais aromático, substituindo a hortelã pelo manjericão.',
+        image: 'https://cocktailteam.net/wp-content/uploads/2017/12/Cocktail-Mojito-de-Manjericao-scaled-1.jpg',
+        flavors: ['herbal', 'refrescante', 'citrico'],
+        ingredients: [
+          { id: 'rum',           quantidade: '50 ml',   alcoolico: true  },
+          { id: 'manjericao',    quantidade: 'a gosto', alcoolico: false },
+          { id: 'limao-taiti',         quantidade: '20 ml',   alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',   alcoolico: false },
+          { id: 'agua-gas',      quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',          quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque o manjericão, limão e xarope no copo.',
+          'Pressione levemente para liberar aroma.',
+          'Adicione gelo.',
+          'Coloque o rum.',
+          'Complete com água com gás.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Permite acomodar ervas e gás sem perder estrutura.',
+        },
+      },
+      {
+        name: 'Herbal Sour (Alecrim)',
+        description: 'Um sour com mais profundidade aromática, onde o alecrim adiciona complexidade ao perfil clássico.',
+        image: 'https://ediblemichiana.ediblecommunities.com/wp-content/uploads/2019/10/herbal-cider-sour-recipe.jpg',
+        flavors: ['herbal', 'citrico', 'equilibrado'],
+        ingredients: [
+          { id: 'gin',           quantidade: '50 ml',   alcoolico: true  },
+          { id: 'alecrim',       quantidade: '1 ramo',  alcoolico: false },
+          { id: 'limao-siciliano',         quantidade: '25 ml',   alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',   alcoolico: false },
+          { id: 'gelo',          quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque o alecrim, limão e xarope na coqueteleira.',
+          'Pressione levemente o alecrim.',
+          'Adicione gelo e o gin.',
+          'Agite por 10 a 15 segundos.',
+          'Despeje apenas o líquido no copo.',
+          'Use pequena quantidade de alecrim para não dominar o sabor do drink.',
+        ],
+        glass: {
+          ideal: 'Copo pequeno',
+          descricao: 'Mantém o drink concentrado.',
+        },
+      },
+      {
+        name: 'Gin & Laranja',
+        description: 'Simples, leve e direto, com dulçor natural da laranja equilibrando o álcool.',
+        image: 'https://s2.glbimg.com/XAa5KDxmyDSpxThmM73JBM5c4v0=/620x550/e.glbimg.com/og/ed/f/original/2022/06/22/receita-drinque-gin-laranja-wakana-morishita-kalvelage.png',
+        flavors: ['citrico', 'refrescante'],
+        ingredients: [
+          { id: 'gin',          quantidade: '50 ml',   alcoolico: true  },
+          { id: 'suco-laranja', quantidade: 'suco de laranja (base) ou fatia de laranja (opcional para aroma)', alcoolico: false },
+          { id: 'gelo',         quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione o gin.',
+          'Complete com suco de laranja.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Permite diluição leve e mantém refrescância.',
+        },
+      },
+      {
+        name: 'Vodka & Cranberry',
+        description: 'Simples e fácil de beber, com perfil frutado suave e pouco alcoólico.',
+        image: 'https://www.tastingtable.com/img/gallery/absolut-and-ocean-spray-team-up-for-vodka-cranberry-canned-cocktail/l-intro-1683051260.jpg',
+        flavors: ['frutado', 'leve'],
+        ingredients: [
+          { id: 'vodka',           quantidade: '50 ml',   alcoolico: true  },
+          { id: 'monin-cranberry', quantidade: '30 ml',   alcoolico: false },
+          { id: 'agua-gas',        quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',            quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione a vodka e o cranberry.',
+          'Complete com água com gás.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Mantém leveza e refrescância.',
+        },
+      },
+      {
+        name: 'Cranberry Fizz',
+        description: 'Leve e fácil de beber, com equilíbrio entre acidez e dulçor e final borbulhante.',
+        image: 'https://images.ctfassets.net/a2epoeqa068n/2XpyShgPhMjysY5qneUNFG/4cee56966a076e1793e637af291ab532/Hendricks_Cranberry_Fizz_Lifestyle__2600x1734_.jpg',
+        flavors: ['frutado', 'citrico', 'refrescante'],
+        ingredients: [
+          { id: 'monin-cranberry', quantidade: '30 ml',   alcoolico: false },
+          { id: 'limao-taiti',           quantidade: '15 ml',   alcoolico: false },
+          { id: 'agua-gas',        quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',            quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione o cranberry e o limão.',
+          'Complete com água com gás.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Mantém leveza e refrescância.',
+        },
+      },
+      {
+        name: 'Amora Fizz',
+        description: 'Mais encorpado e levemente mais doce, com sabor de fruta mais presente.',
+        image: 'https://i0.wp.com/www.imbored-letsgo.com/wp-content/uploads/2014/05/Blackberry-Fizz-3.jpg?ssl=1',
+        flavors: ['frutado', 'refrescante'],
+        ingredients: [
+          { id: 'monin-amora', quantidade: '30 ml',   alcoolico: false },
+          { id: 'limao-taiti',       quantidade: '15 ml',   alcoolico: false },
+          { id: 'agua-gas',    quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',        quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione a amora e o limão.',
+          'Complete com água com gás.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Mantém equilíbrio entre fruta e gás.',
+        },
+      },
+      {
+        name: 'Strawberry Lemonade',
+        description: 'Mais suave e adocicado, com o morango equilibrando a acidez do limão.',
+        image: 'https://lh4.googleusercontent.com/proxy/QCRulG2tz2KEQgiEDaspWkOBg6-KdnhzKdFkoU2d88evO-Pg4uX0FzOBnRp-O8JyxesB2P-KY646lISFoPk5FByR3ilkxfW6t6RA2Y-4153pK9QNwnxXTjdbypp6Js2nGK5Z_wxVQZiFG536A8ov',
+        flavors: ['frutado', 'citrico', 'refrescante'],
+        ingredients: [
+          { id: 'morango',       quantidade: 'a gosto', alcoolico: false },
+          { id: 'limao-taiti',         quantidade: '25 ml',   alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',   alcoolico: false },
+          { id: 'agua-gas',      quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',          quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque os morangos no copo e amasse levemente.',
+          'Adicione o limão e o xarope.',
+          'Coloque gelo.',
+          'Complete com água com gás.',
+          'Misture bem.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Acomoda bem fruta e líquido.',
+        },
+      },
+      {
+        name: 'Berry Mix',
+        description: 'Mistura de frutas com perfil mais encorpado e sabor marcante.',
+        image: 'https://www.ambarinutrition.com/cdn/shop/files/Mixed_Berry_Protein_Fruit_Drink.png?v=1769438727',
+        flavors: ['frutado', 'equilibrado'],
+        ingredients: [
+          { id: 'monin-cranberry', quantidade: '20 ml',   alcoolico: false },
+          { id: 'monin-amora',     quantidade: '20 ml',   alcoolico: false },
+          { id: 'limao-taiti',           quantidade: '15 ml',   alcoolico: false },
+          { id: 'agua-gas',        quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',            quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione os monins e o limão.',
+          'Complete com água com gás.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Mantém leveza mesmo com mais sabor.',
+        },
+      },
+      {
+        name: 'Hortelã Lemonade',
+        description: 'Leve e extremamente refrescante, com frescor da hortelã em destaque.',
+        image: 'https://www.giallozafferano.com.br/images/44-4479/limonada-com-hortela_1200x800.jpg',
+        flavors: ['herbal', 'citrico', 'refrescante'],
+        ingredients: [
+          { id: 'menta',         quantidade: 'a gosto', alcoolico: false },
+          { id: 'limao-taiti',         quantidade: '25 ml',   alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',   alcoolico: false },
+          { id: 'agua-gas',      quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',          quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque hortelã, limão e xarope no copo.',
+          'Pressione levemente a hortelã antes de adicionar os líquidos para liberar aroma.',
+          'Adicione gelo.',
+          'Complete com água com gás.',
+          'Misture bem.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Mantém frescor e leveza.',
+        },
+      },
+      {
+        name: 'Manjericão Lemonade',
+        description: 'Mais aromático e menos óbvio, com o manjericão trazendo um toque sofisticado.',
+        image: 'https://cocktailteam.net/wp-content/uploads/2017/12/Cocktail-Mojito-de-Manjericao-scaled-1.jpg',
+        flavors: ['herbal', 'citrico'],
+        ingredients: [
+          { id: 'manjericao',    quantidade: 'a gosto', alcoolico: false },
+          { id: 'limao-taiti',         quantidade: '25 ml',   alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',   alcoolico: false },
+          { id: 'agua-gas',      quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',          quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Coloque manjericão, limão e xarope.',
+          'Pressione levemente.',
+          'Adicione gelo.',
+          'Complete com água com gás.',
+          'Misture.',
+          'Use pouca quantidade de manjericão para evitar que o sabor domine o drink.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Valoriza o aroma herbal.',
+        },
+      },
+      {
+        name: 'Alecrim & Laranja',
+        description: 'Mais sofisticado, com aroma marcante do alecrim combinado com a doçura natural da laranja.',
+        image: 'https://gingerwithspice.com/wp-content/uploads/2024/10/Golden-Sparkle-Mandarin-Cocktail-15.jpg.webp',
+        flavors: ['herbal', 'citrico', 'aromatico'],
+        ingredients: [
+          { id: 'suco-laranja', quantidade: 'suco de laranja (base) + fatia de laranja (opcional)', alcoolico: false },
+          { id: 'alecrim',      quantidade: '1 ramo',  alcoolico: false },
+          { id: 'agua-gas',     quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',         quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Pressione levemente o alecrim antes de adicionar os líquidos para liberar aroma.',
+          'Adicione gelo.',
+          'Coloque o suco de laranja.',
+          'Complete com água com gás.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Ajuda na liberação dos aromas.',
+        },
+      },
+      {
+        name: 'Ginger Lemonade',
+        description: 'Refrescante com leve toque picante do gengibre, trazendo mais personalidade.',
+        image: 'https://www.sugarmaplefarmhouse.com/app/uploads/2021-05-17_0005-scaled.jpg',
+        flavors: ['citrico', 'refrescante', 'picante'],
+        ingredients: [
+          { id: 'limao-taiti',         quantidade: '25 ml',   alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',   alcoolico: false },
+          { id: 'ginger-beer',   quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',          quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione o limão e o xarope.',
+          'Complete com ginger beer.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Mantém o gás e o frescor.',
+        },
+      },
+      {
+        name: 'French 75',
+        description: 'Elegante e leve, combina a estrutura de um sour com a leveza do espumante. Começa cítrico e termina seco e borbulhante.',
+        image: 'https://so-sour.com/wp-content/uploads/2024/08/French-75.jpg',
+        flavors: ['citrico', 'refrescante', 'classico'],
+        ingredients: [
+          { id: 'gin',           quantidade: '30 ml', alcoolico: true  },
+          { id: 'limao-siciliano',         quantidade: '15 ml', alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '10 ml', alcoolico: false },
+          { id: 'espumante',     quantidade: '60 ml', alcoolico: true  },
+          { id: 'gelo',          quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha a coqueteleira com gelo.',
+          'Adicione o gin, o suco de limão e o xarope de açúcar.',
+          'Agite por cerca de 10 a 15 segundos até gelar bem.',
+          'Segure o gelo e despeje apenas o líquido no copo.',
+          'Complete com o espumante.',
+          'Misture suavemente para não perder o gás.',
+        ],
+        glass: {
+          ideal: 'Taça',
+          alternativa: 'Copo alto',
+          descricao: 'O formato ajuda a preservar o gás e valoriza a leveza do drink.',
+        },
+      },
+      {
+        name: 'Aperol Sour',
+        description: 'Uma variação interessante dos sours clássicos, onde o amargor leve do aperol equilibra o dulçor e a acidez. Mais leve e fácil de beber que outros sours.',
+        image: 'https://images.unsplash.com/photo-1641475911504-578d65818831?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        flavors: ['citrico', 'amargo', 'equilibrado'],
+        ingredients: [
+          { id: 'aperol',        quantidade: '50 ml',   alcoolico: true  },
+          { id: 'limao-taiti',         quantidade: '25 ml (siciliano como opcional)',   alcoolico: false },
+          { id: 'xarope-acucar', quantidade: '15 ml',   alcoolico: false },
+          { id: 'gelo',          quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha a coqueteleira com gelo.',
+          'Adicione todos os ingredientes.',
+          'Agite por cerca de 10 a 15 segundos até gelar bem.',
+          'Segure o gelo e despeje apenas o líquido no copo.',
+        ],
+        glass: {
+          ideal: 'Copo pequeno',
+          alternativa: 'Taça',
+          descricao: 'Servir sem gelo mantém o equilíbrio entre amargor, doce e ácido.',
+        },
+      },
+      {
+        name: 'Rickey (Gin)',
+        description: 'Extremamente leve e direto, com acidez evidente e quase nenhum dulçor. Ideal para quem prefere drinks mais secos e refrescantes.',
+        image: 'https://punchdrink.com/wp-content/uploads/2021/09/Article-Gin-Rickey-Cocktail-Recipe-Andra-AJ-Johnson-Serenata-Washington-DC.jpg?w=800',
+        flavors: ['citrico', 'seco', 'refrescante', 'classico'],
+        ingredients: [
+          { id: 'gin',      quantidade: '50 ml',   alcoolico: true  },
+          { id: 'limao-taiti',    quantidade: '25 ml',   alcoolico: false },
+          { id: 'agua-gas', quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',     quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione o gin e o suco de limão.',
+          'Complete com água com gás.',
+          'Misture suavemente para não perder o gás.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          alternativa: 'Copo médio',
+          descricao: 'O copo alto permite manter o gás e diluir lentamente.',
+        },
+      },
+      {
+        name: 'Garibaldi',
+        description: 'Simples e vibrante, combina o amargor do campari com a doçura natural da laranja. Fácil de beber e muito equilibrado.',
+        image: 'https://www.estadao.com.br/resizer/OuWF2B0C6CIxMZMWfQ6Q6QBlwjU=/arc-anglerfish-arc2-prod-estadao/public/PLGD23C32VJXXNE6T6AWNTUOGQ.jpg',
+        flavors: ['citrico', 'amargo', 'refrescante', 'classico'],
+        ingredients: [
+          { id: 'campari',      quantidade: '50 ml',   alcoolico: true  },
+          { id: 'suco-laranja', quantidade: 'suco de laranja', alcoolico: false },
+          { id: 'gelo',         quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione o campari.',
+          'Complete com o suco de laranja.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          alternativa: 'Copo médio',
+          descricao: 'Permite maior volume e deixa o drink mais leve.',
+        },
+      },
+      {
+        name: 'Aperol & Tônica',
+        description: 'Leve e fácil de beber, com amargor suave do aperol equilibrado pela tonicidade e leve dulçor. Uma alternativa mais simples e menos alcoólica ao spritz.',
+        image: 'https://cookingwithelo.com/wp-content/uploads/2022/04/Aperol-tonic.jpg',
+        flavors: ['refrescante', 'amargo', 'leve'],
+        ingredients: [
+          { id: 'aperol',      quantidade: '50 ml',           alcoolico: true  },
+          { id: 'agua-tonica', quantidade: 'a gosto',         alcoolico: false },
+          { id: 'gelo',        quantidade: 'a gosto',         alcoolico: false },
+          { id: 'laranja',     quantidade: 'opcional',        alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com bastante gelo.',
+          'Adicione o aperol.',
+          'Complete com água tônica.',
+          'Misture suavemente para não perder o gás.',
+          'Se quiser, finalize com a fatia de laranja.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          alternativa: 'Taça',
+          descricao: 'O copo maior ajuda a preservar o gás e manter o drink leve.',
+        },
+      },
+      {
+        name: 'Aperol & Laranja',
+        description: 'Simples e equilibrado, com a doçura natural da laranja suavizando o amargor do aperol. Fácil de beber e muito acessível.',
+        image: 'https://theboozyginger.com/wp-content/uploads/2024/04/The-Boozy-Ginger-Aperol-Mimosa-7-scaled.jpg',
+        flavors: ['citrico', 'amargo', 'refrescante'],
+        ingredients: [
+          { id: 'aperol',      quantidade: '50 ml',    alcoolico: true  },
+          { id: 'suco-laranja', quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',        quantidade: 'a gosto',  alcoolico: false },
+          { id: 'laranja',     quantidade: 'opcional', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione o aperol.',
+          'Complete com suco de laranja.',
+          'Misture suavemente.',
+          'Finalize com fatia de laranja, se quiser.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Permite maior volume e deixa o drink mais leve.',
+        },
+      },
+      {
+        name: 'Aperol Mule',
+        description: 'Uma variação mais leve do mule, com o aperol trazendo um amargor suave que equilibra o gengibre e o cítrico.',
+        image: 'https://blog.experimentebegin.com.br/wp-content/uploads/2024/05/BP-5-drinks-com-aperol-Thumb.png',
+        flavors: ['refrescante', 'citrico', 'amargo'],
+        ingredients: [
+          { id: 'aperol',             quantidade: '50 ml',    alcoolico: true  },
+          { id: 'limao-taiti',        quantidade: '15 ml',    alcoolico: false },
+          { id: 'ginger-beer',        quantidade: '100 ml',   alcoolico: false },
+          { id: 'espuma-moscow-mule', quantidade: 'opcional', alcoolico: false },
+          { id: 'gelo',              quantidade: 'a gosto',   alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione o aperol e o limão.',
+          'Complete com ginger beer.',
+          'Misture suavemente.',
+          'Adicione a espuma por cima ao final, sem misturar, para criar uma camada cremosa.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Mantém o gás e sustenta a espuma.',
+        },
+      },
+      {
+        name: 'Contessa',
+        description: 'Uma variação mais leve do Negroni, substituindo o campari por aperol. Mantém a estrutura clássica, mas com perfil mais acessível.',
+        image: 'https://www.saveur.com/uploads/2014/11/230526-11-MURRAYHALL-SAVEUR-CONTESSA-035-scaled.jpg?auto=webp',
+        flavors: ['amargo', 'equilibrado', 'classico'],
+        ingredients: [
+          { id: 'gin',     quantidade: '30 ml (pode substituir por rum)', alcoolico: true  },
+          { id: 'vermute', quantidade: '30 ml',                           alcoolico: true  },
+          { id: 'aperol',  quantidade: '30 ml',                           alcoolico: true  },
+          { id: 'gelo',    quantidade: 'a gosto',                         alcoolico: false },
+          { id: 'laranja', quantidade: 'casca (opcional)',                 alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione todos os ingredientes.',
+          'Misture por cerca de 20 segundos.',
+          'Se quiser, pressione a casca de laranja sobre o drink para liberar os óleos e coloque no copo.',
+        ],
+        glass: {
+          ideal: 'Copo baixo',
+          descricao: 'Mantém o drink concentrado e estruturado.',
+        },
       },
     ];
 
@@ -1066,6 +2191,8 @@
       currentMode:         null,        // 'ingredientes' | 'sabor'
       currentReceita:      null,
       receitaFrom:         'resultado',
+      alcoolFilter:        'todos',     // 'todos' | 'alcool' | 'sem'
+      lastScored:          [],
     };
 
     const drinkFilters = {
@@ -1098,6 +2225,13 @@
         }
       }
       comingFromRefinement = false;
+
+      if (screenId === 'drinks' || screenId === 'resultado') {
+        state.alcoolFilter = 'todos';
+        document.querySelectorAll('.btn-alc').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.val === 'todos');
+        });
+      }
 
       if (screenId === 'admin')        adminInit();
       if (screenId === 'sabores')      renderFlavorsGrid();
@@ -1235,6 +2369,15 @@
           )
         );
       }
+      if (state.alcoolFilter === 'alcool') {
+        results = results.filter(({ drink }) => isDrinkAlcoolico(drink));
+      } else if (state.alcoolFilter === 'sem') {
+        results = results.filter(({ drink }) => !isDrinkAlcoolico(drink));
+      }
+
+      results = [...results].sort((a, b) =>
+        a.drink.name.localeCompare(b.drink.name, 'pt-BR', { sensitivity: 'base' })
+      );
 
       const countEl = document.getElementById('drinks-count');
       if (countEl) countEl.textContent = `${results.length} drink${results.length !== 1 ? 's' : ''}`;
@@ -1245,8 +2388,8 @@
       if (results.length === 0) {
         grid.innerHTML = `
           <div style="grid-column:1/-1; text-align:center; padding:64px 24px; color:#9ca3af;">
-            <p style="font-size:15px; font-weight:600; color:#374151; margin-bottom:6px;">Nenhum drink encontrado</p>
-            <p style="font-size:13px;">Tente outros filtros ou limpe a busca.</p>
+            <p style="font-size:15px; font-weight:600; color:#374151; margin-bottom:6px;">Ainda não temos um drink pra essa seleção.</p>
+            <p style="font-size:14px;">Tente outros filtros ou limpe a busca.</p>
           </div>`;
         return;
       }
@@ -1260,7 +2403,10 @@
             }
           </div>
           <div class="drink-card-content">
-            <p class="drink-title" style="font-size:1.4rem; margin-bottom:16px;">${drink.name}</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:16px;">
+              <p class="drink-title" style="font-size:1.4rem; margin:0;">${drink.name}</p>
+              ${!isDrinkAlcoolico(drink) ? '<span class="badge badge-nonalc">Sem álcool</span>' : ''}
+            </div>
             <div class="drink-tags">${renderFlavorTags(drink.flavors)}</div>
             <p class="drink-description">${drink.description}</p>
             <span class="drink-cta">Ver receita →</span>
@@ -1416,28 +2562,42 @@
     // ══════════════════════════
 
     function renderResults(drinksWithScores) {
+      state.lastScored = drinksWithScores;
       const list = document.getElementById('results-list');
       if (!list) return;
 
-      if (drinksWithScores.length === 0) {
+      const filtered = (state.alcoolFilter === 'alcool'
+        ? drinksWithScores.filter(({ drink }) => isDrinkAlcoolico(drink))
+        : state.alcoolFilter === 'sem'
+          ? drinksWithScores.filter(({ drink }) => !isDrinkAlcoolico(drink))
+          : drinksWithScores
+      ).sort((a, b) =>
+        a.drink.name.localeCompare(b.drink.name, 'pt-BR', { sensitivity: 'base' })
+      );
+
+      if (filtered.length === 0) {
         list.innerHTML = `
           <div style="text-align:center; padding:48px 24px; color:#9ca3af; border:1.5px solid #e2e8f0; border-radius:12px; background:#fff;">
-            <p style="font-size:15px; font-weight:600; color:#374151; margin-bottom:6px;">Nenhum drink encontrado</p>
-            <p style="font-size:13px;">Tente selecionar mais ingredientes ou um sabor diferente.</p>
+            <p style="font-size:15px; font-weight:600; color:#374151; margin-bottom:6px;">Isso aqui foi longe demais.</p>
+            <p style="font-size:14px;">Nem o coelho conseguiu montar um drink com essa combinação.</p>
+            <p style="font-size:14px;">Tente selecionar mais ingredientes ou um sabor diferente.</p>
           </div>`;
         return;
       }
 
-      list.innerHTML = drinksWithScores.map(({ drink, index, score }) => `
+      list.innerHTML = filtered.map(({ drink, index, score }) => `
         <div class="drink-card drink-card-grid" onclick="openReceita(${index}, 'resultado')">
-          <div class="drink-card-image" style="border-right:1px solid #e2e8f0;">
+          <div class="drink-image" style="border-right:1px solid #e2e8f0;">
             ${drink.image
               ? `<img src="${drink.image}" alt="${drink.name}" />`
               : `<span class="drink-card-image-placeholder">◈</span>`
             }
           </div>
           <div class="drink-card-content">
-            <p class="drink-compatibility">Combina ${score}% com você</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <p class="drink-compatibility" style="margin:0;">Combina ${score}% com você</p>
+              ${!isDrinkAlcoolico(drink) ? '<span class="badge badge-nonalc">Sem álcool</span>' : ''}
+            </div>
             <p class="drink-title" style="font-size:1.5rem; margin-bottom:16px;">${drink.name}</p>
             <div class="drink-tags">${renderFlavorTags(drink.flavors)}</div>
             <p class="drink-description">${drink.description}</p>
@@ -1520,10 +2680,10 @@
       layout.style.gridTemplateColumns = isWide ? '1fr 1fr' : '1fr';
 
       const imageHtml = drink.image
-        ? `<img src="${drink.image}" alt="${drink.name}" style="width:100%; border-radius:12px; object-fit:cover; aspect-ratio:9/16; display:block;" />`
+        ? `<img src="${drink.image}" alt="${drink.name}" style="width:100%; border-radius:12px; object-fit:cover; aspect-ratio:3/4; display:block;" />`
         : `<div style="width:100%; border-radius:12px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; min-height:320px; font-size:6rem; opacity:0.2; color:#64748b;">◈</div>`;
 
-      const ingredientsHtml = drink.ingredients.map(ing => {
+      let ingredientsHtml = drink.ingredients.map(ing => {
         const ingObj = typeof ing === 'string' ? { id: ing, alcoolico: false } : ing;
         const name   = getIngredientName(ingObj.id);
         const qty    = ingObj.quantidade
@@ -1533,7 +2693,7 @@
           ? `<span class="badge badge-alc">Alcoólico</span>`
           : `<span class="badge badge-nonalc">Sem álcool</span>`;
         return `
-          <div style="display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid #f1f5f9;">
+          <div class="ingredient-row">
             <span style="font-size:14px; color:#374151; display:flex; align-items:center;">${qty}${name}</span>
             ${badge}
           </div>`;
@@ -1545,6 +2705,20 @@
           <p style="font-size:16px; color:#374151; line-height:1.7; margin:0; padding-top:5px;">${step}</p>
         </div>
       `).join('');
+
+      if (drink.glass) {
+        const glassSvg = GLASS_SVG[drink.glass.ideal] || 'assets/glass-rocks.svg';
+        ingredientsHtml += `
+          <div class="ingredient-row" style="display:flex; justify-content:space-between; align-items:stretch; gap:16px;">
+            <div class="glass-content">
+              <span style="font-size:14px; color:#374151;">
+                <strong style="font-weight:600; color:#374151;">Ideal:</strong> ${drink.glass.ideal}${drink.glass.alternativa ? ` &nbsp;·&nbsp; <strong style="font-weight:600; color:#374151;">Alternativa:</strong> ${drink.glass.alternativa}` : ''}
+              </span>
+              <p style="font-size:13px; font-weight:400; color:#374151; margin:0; line-height:1.6;">${drink.glass.descricao}</p>
+            </div>
+            <img src="${glassSvg}" style="height:100%; width:auto; min-width:32px; max-width:48px; flex-shrink:0; opacity:0.7; object-fit:contain; align-self:center;" />
+          </div>`;
+      }
 
       layout.innerHTML = `
         <div>${imageHtml}</div>
@@ -1563,6 +2737,9 @@
         </div>
       `;
 
+      const glassEl = document.getElementById('receita-glass');
+      if (glassEl) glassEl.innerHTML = '';
+
       lucide.createIcons();
     }
 
@@ -1577,6 +2754,19 @@
         const fl = FLAVORS.find(f => f.id === fid);
         return fl ? `<span class="flavor-tag">${fl.emoji} ${fl.name}</span>` : '';
       }).join('');
+    }
+
+    function isDrinkAlcoolico(drink) {
+      return drink.ingredients.some(ing => typeof ing !== 'string' && ing.alcoolico === true);
+    }
+
+    function setAlcoolFilter(val) {
+      state.alcoolFilter = val;
+      document.querySelectorAll('.btn-alc').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.val === val);
+      });
+      filterDrinks();
+      if (state.lastScored.length > 0) renderResults(state.lastScored);
     }
 
 
