@@ -445,14 +445,49 @@
       .admin-panel-content { padding: 20px !important; }
       .admin-ing-grid      { grid-template-columns: 1fr !important; }
 
-      /* — Header nav: compact — */
+      /* — Header nav: hide admin on mobile — */
       nav { gap: 12px; }
       .nav-link { font-size: 9px; letter-spacing: 0.12em; }
+      .nav-admin-link { display: none !important; }
 
-      /* — Filter panel: full screen width — */
-      #drinks-filter-panel { width: 100vw !important; }
+      /* — Drinks control bar: two rows — */
+      #drinks-control-bar { flex-wrap: wrap; gap: 8px 10px; }
+      #drinks-control-bar .btn-alc-group { order: 3; flex: 1; }
+      #drinks-control-bar .btn-alc { flex: 1; text-align: center; }
+      #drinks-count { order: 4; margin-left: 0 !important; width: 100%; }
+
+      /* — Filter panel: bottom sheet — */
+      #drinks-filter-panel {
+        top: auto !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: auto !important;
+        max-height: 82vh !important;
+        width: 100% !important;
+        border-left: none !important;
+        border-top: 1.5px solid #e2e8f0 !important;
+        border-radius: 20px 20px 0 0 !important;
+      }
+      .filter-panel-handle {
+        width: 36px; height: 4px;
+        background: #d1d5db; border-radius: 2px;
+        margin: 12px auto 0;
+        flex-shrink: 0;
+      }
+
+      /* — Resultado filter row: stack alc-group below chips — */
+      #resultado-filter-row { gap: 8px; }
+      #resultado-filter-row .btn-alc-group { width: 100%; justify-content: stretch; }
+      #resultado-filter-row .btn-alc { flex: 1; text-align: center; }
 
 
+    }
+
+    /* — Handle only visible on mobile — */
+    .filter-panel-handle { display: none; }
+    @media (max-width: 768px) {
+      .filter-panel-handle { display: block; }
     }
   </style>
 </head>
@@ -465,7 +500,7 @@
       <nav>
         <button class="nav-link" onclick="goTo('drinks')">Todos os drinks</button>
         <button class="nav-link" onclick="goTo('escolha')">Sugestão</button>
-        <button class="nav-link muted" onclick="goTo('admin')">Admin</button>
+        <button class="nav-link muted nav-admin-link" onclick="goTo('admin')">Admin</button>
       </nav>
     </div>
   </header>
@@ -518,7 +553,7 @@
       </h2>
 
       <!-- Control bar: search + filter btn + count -->
-      <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+      <div id="drinks-control-bar" style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
         <div class="search-wrap" style="max-width:340px; flex:1;">
           <span class="search-icon"><i data-lucide="search" style="width:15px;height:15px;"></i></span>
           <input type="text" class="search-input" id="drinks-search" placeholder="Buscar por nome de drink..." oninput="filterDrinks()" style="padding-top:9px; padding-bottom:9px;" />
@@ -673,7 +708,7 @@
       </div>
       <p id="resultado-subtitle" style="font-size:18px; color:#6b7280; margin:0 0 24px; line-height:1.7;"></p>
 
-      <div style="display:flex; flex-wrap:wrap; align-items:flex-start; gap:12px; margin-bottom:24px;">
+      <div id="resultado-filter-row" style="display:flex; flex-wrap:wrap; align-items:flex-start; gap:12px; margin-bottom:24px;">
         <div id="resultado-selections" style="display:flex; flex-wrap:wrap; gap:8px; flex:1;"></div>
         <div class="btn-alc-group">
           <button class="btn-alc active" data-val="todos" onclick="setAlcoolFilter('todos')">Todos</button>
@@ -889,6 +924,9 @@
   <!-- ════════ FILTER PANEL ════════ -->
   <div id="drinks-filter-overlay" onclick="closeDrinkFilters()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.25); z-index:200;"></div>
   <div id="drinks-filter-panel" style="display:none; position:fixed; top:0; right:0; height:100%; width:min(420px,100vw); background:#fff; border-left:1.5px solid #e2e8f0; z-index:201; flex-direction:column;">
+
+    <!-- Bottom sheet handle (visible on mobile only) -->
+    <div class="filter-panel-handle" aria-hidden="true"></div>
 
     <!-- Panel header -->
     <div style="display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid #e2e8f0; flex-shrink:0;">
