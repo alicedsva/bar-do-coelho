@@ -2260,12 +2260,7 @@
       }
       comingFromRefinement = false;
 
-      if (screenId === 'drinks' || screenId === 'resultado') {
-        state.alcoolFilter = 'todos';
-        document.querySelectorAll('.btn-alc').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.val === 'todos');
-        });
-      }
+      if (screenId === 'drinks') resetAlcoolFilter();
 
       if (screenId === 'admin')        adminInit();
       if (screenId === 'sabores')      renderFlavorsGrid();
@@ -2554,6 +2549,7 @@
       document.getElementById('resultado-refine-btn').onclick = () => refinarSelecao('sabores');
 
       renderSelectionChips();
+      resetAlcoolFilter();
       renderResults(scored);
       goTo('resultado');
     }
@@ -2578,6 +2574,7 @@
       document.getElementById('resultado-refine-btn').onclick = () => refinarSelecao('ingredientes');
 
       renderSelectionChips();
+      resetAlcoolFilter();
       renderResults(scored);
       goTo('resultado');
     }
@@ -2792,6 +2789,13 @@
 
     function isDrinkAlcoolico(drink) {
       return drink.ingredients.some(ing => typeof ing !== 'string' && ing.alcoolico === true);
+    }
+
+    function resetAlcoolFilter() {
+      state.alcoolFilter = 'todos';
+      document.querySelectorAll('.btn-alc').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.val === 'todos');
+      });
     }
 
     function setAlcoolFilter(val) {
