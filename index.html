@@ -185,6 +185,22 @@
     .chip-lg:active { transform: scale(0.97); opacity: 0.95; }
     .chip-lg.selected { background: #0891b2; border-color: #0891b2; color: #fff; }
 
+    /* ── Sabores CTA bar ── */
+    @keyframes sabores-cta-in {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    #sabores-actions,
+    #ingredientes-actions {
+      position: sticky;
+      top: 60px;
+      z-index: 20;
+      background: #f8fafc;
+      padding: 12px 0;
+      margin-left: -2px;
+      animation: sabores-cta-in 0.2s ease;
+    }
+
     /* ── Flavor tag ── */
     .flavor-tag {
       display: inline-flex; align-items: center;
@@ -429,10 +445,12 @@
       .cta-group .btn { width: 100%; justify-content: center; }
 
       /* — Ingredientes / Sabores action bars — */
-      #ingredientes-actions { flex-direction: column !important; align-items: stretch !important; }
-      #sabores-actions      { flex-direction: column !important; align-items: stretch !important; }
+      #ingredientes-actions,
+      #sabores-actions      { flex-direction: column !important; align-items: stretch !important; top: 56px !important; }
       #ingredientes-actions .btn,
-      #sabores-actions .btn { width: 100%; justify-content: center; }
+      #ingredientes-actions .btn-ghost,
+      #sabores-actions .btn,
+      #sabores-actions .btn-ghost { width: 100%; justify-content: center; }
 
       /* — Admin: sidebar stacks above content — */
       .admin-panel-grid    { grid-template-columns: 1fr !important; }
@@ -630,9 +648,20 @@
       <h2 class="heading" style="font-size:clamp(2rem,4vw,3rem); margin-bottom:8px;">
         O que você tem na mesa?
       </h2>
-      <p style="font-size:18px; color:#6b7280; margin-bottom:40px; line-height:1.7;">
+      <p style="font-size:18px; color:#6b7280; margin-bottom:24px; line-height:1.7;">
         Escolha os ingredientes que você quer usar e veja o que dá pra preparar com eles.
       </p>
+
+      <div id="ingredientes-actions" style="display:none; align-items:center; gap:16px; margin-bottom:32px; flex-wrap:wrap;">
+        <button class="btn btn-fill" onclick="showResultsByIngredients()">
+          Ver sugestões do Coelho
+          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+        </button>
+        <button class="btn-ghost" onclick="clearIngredients()">
+          <i data-lucide="x" style="width:13px;height:13px;"></i>
+          Limpar seleção
+        </button>
+      </div>
 
       <div style="margin-bottom:32px;">
         <p class="section-label" style="margin-bottom:16px;">Alcoólicos</p>
@@ -642,17 +671,6 @@
       <div style="margin-bottom:40px;">
         <p class="section-label" style="margin-bottom:16px;">Não alcoólicos</p>
         <div id="chips-nao-alcoolicos" style="display:flex; flex-wrap:wrap; gap:12px;"></div>
-      </div>
-
-      <div id="ingredientes-actions" class="hidden" style="display:none; align-items:center; gap:16px; margin-top:32px; flex-wrap:wrap;">
-        <button class="btn-ghost" onclick="clearIngredients()">
-          <i data-lucide="x" style="width:13px;height:13px;"></i>
-          Limpar seleção
-        </button>
-        <button class="btn btn-fill" onclick="showResultsByIngredients()">
-          Ver sugestões do Coelho
-          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
-        </button>
       </div>
 
     </div>
@@ -672,22 +690,22 @@
       <h2 class="heading" style="font-size:clamp(2rem,4vw,3rem); margin-bottom:16px;">
         Qual sabor você quer sentir hoje?
       </h2>
-      <p style="font-size:18px; color:#6b7280; margin-bottom:40px; line-height:1.7;">
+      <p style="font-size:18px; color:#6b7280; margin-bottom:24px; line-height:1.7;">
         Escolha um ou mais perfis de sabor e descubra o drink ideal para o momento.
       </p>
 
-      <div id="flavors-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; margin-bottom:40px;"></div>
-
-      <div id="sabores-actions" class="hidden" style="display:none; align-items:center; gap:16px; margin-top:8px; flex-wrap:wrap;">
-        <button class="btn-ghost" onclick="clearFlavors()">
-          <i data-lucide="x" style="width:13px;height:13px;"></i>
-          Limpar seleção
-        </button>
+      <div id="sabores-actions" style="display:none; align-items:center; gap:16px; margin-bottom:32px; flex-wrap:wrap;">
         <button class="btn btn-fill" onclick="showResultsByFlavor()">
           Ver sugestões do Coelho
           <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
         </button>
+        <button class="btn-ghost" onclick="clearFlavors()">
+          <i data-lucide="x" style="width:13px;height:13px;"></i>
+          Limpar seleção
+        </button>
       </div>
+
+      <div id="flavors-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; margin-bottom:40px;"></div>
 
     </div>
   </div>
@@ -996,6 +1014,7 @@
       { id: 'xarope-acucar',       name: 'Xarope de Açúcar' },
       { id: 'monin-amora',         name: 'Monin de Amora' },
       { id: 'zimbro',              name: 'Zimbro' },
+      { id: 'maracutala-maracuja', name: 'Maracutala de Maracujá' },
     ];
 
     let FLAVORS = [
@@ -2212,6 +2231,126 @@
           descricao: 'Mantém o drink concentrado e estruturado.',
         },
       },
+      {
+        name: 'Maracujá Sour',
+        description: 'Vibrante e refrescante, com a acidez marcante do limão equilibrada pelo dulçor tropical do maracujá. Fácil de beber e muito aromático.',
+        image: 'https://anothercocktailblog.com/wp-content/uploads/2023/04/Passion-Fruit-Pisco-Sour-4.jpg',
+        flavors: ['citrico', 'frutado', 'equilibrado'],
+        ingredients: [
+          { id: 'vodka',               quantidade: '50 ml (pode substituir por gin)', alcoolico: true  },
+          { id: 'maracutala-maracuja', quantidade: '30 ml',                           alcoolico: false },
+          { id: 'limao-taiti',         quantidade: '25 ml (pode usar siciliano)',      alcoolico: false },
+          { id: 'xarope-acucar',       quantidade: '10 ml',                           alcoolico: false },
+          { id: 'gelo',                quantidade: 'a gosto',                         alcoolico: false },
+        ],
+        steps: [
+          'Encha a coqueteleira com gelo.',
+          'Adicione todos os ingredientes.',
+          'Agite por 10–15 segundos até gelar bem.',
+          'Segure o gelo e despeje apenas o líquido no copo.',
+        ],
+        glass: {
+          ideal: 'Copo pequeno',
+          alternativa: 'Taça',
+          descricao: 'Copo menor mantém o equilíbrio entre doce e ácido sem diluir.',
+        },
+      },
+      {
+        name: 'Maracujá Mule',
+        description: 'Combinação tropical com a leve picância do gengibre, resultando em um drink equilibrado e muito refrescante.',
+        image: 'https://images.ctfassets.net/f9z36dqlmpno/NP1gZv1nhH2nvQZtMkzbB/92ab1585cb9c148ec36e758a9ca93a40/AI_-_Passion_Fruit_Mule.jpg',
+        flavors: ['refrescante', 'frutado', 'picante'],
+        ingredients: [
+          { id: 'vodka',               quantidade: '50 ml (pode substituir por gin)', alcoolico: true  },
+          { id: 'maracutala-maracuja', quantidade: '30 ml',                           alcoolico: false },
+          { id: 'limao-taiti',         quantidade: '15 ml',                           alcoolico: false },
+          { id: 'ginger-beer',         quantidade: '100 ml',                          alcoolico: false },
+          { id: 'espuma-moscow-mule',  quantidade: 'opcional',                        alcoolico: false },
+          { id: 'gelo',                quantidade: 'a gosto',                         alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione a vodka, o maracujá e o limão.',
+          'Complete com ginger beer.',
+          'Misture suavemente.',
+          'Finalize com espuma por cima, se quiser.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Mantém o gás e sustenta a espuma.',
+        },
+      },
+      {
+        name: 'Maracujá Spritz',
+        description: 'Leve e borbulhante, com perfil tropical e fácil de beber. Ideal para momentos descontraídos.',
+        image: 'https://www.1800tequila.com/wp-content/uploads/2021/10/C-passion-spritz-1@2x.jpg',
+        flavors: ['refrescante', 'frutado', 'leve'],
+        ingredients: [
+          { id: 'espumante',           quantidade: '90 ml',   alcoolico: true  },
+          { id: 'maracutala-maracuja', quantidade: '30 ml',   alcoolico: false },
+          { id: 'agua-gas',            quantidade: '30 ml',   alcoolico: false },
+          { id: 'gelo',                quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione o espumante.',
+          'Coloque o maracujá.',
+          'Complete com água com gás.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Taça',
+          alternativa: 'Copo alto',
+          descricao: 'Preserva o gás e valoriza o aroma.',
+        },
+      },
+      {
+        name: 'Maracujá Gin Tônica',
+        description: 'Uma variação mais aromática da gin tônica, com toque tropical equilibrando o amargor da tônica.',
+        image: 'https://sabor.vn/wp-content/uploads/2023/10/Passion-Fruit-Vanilla-Gin-Tonic-Sabor-Restaurant-1-scaled.jpg',
+        flavors: ['refrescante', 'frutado'],
+        ingredients: [
+          { id: 'gin',                 quantidade: '50 ml (pode substituir por vodka)', alcoolico: true  },
+          { id: 'maracutala-maracuja', quantidade: '20 ml',                             alcoolico: false },
+          { id: 'agua-tonica',         quantidade: 'a gosto',                           alcoolico: false },
+          { id: 'zimbro',              quantidade: '2 bagas (opcional)',                 alcoolico: false },
+          { id: 'gelo',                quantidade: 'a gosto',                           alcoolico: false },
+        ],
+        steps: [
+          'Se usar zimbro, pressione levemente no copo.',
+          'Adicione gelo.',
+          'Coloque o gin e o maracujá.',
+          'Complete com água tônica.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo grande',
+          alternativa: 'Taça',
+          descricao: 'Mais espaço ajuda a distribuir o aroma.',
+        },
+      },
+      {
+        name: 'Maracujá & Laranja',
+        description: 'Leve e tropical, com duas frutas de perfis complementares. Suave e acessível.',
+        image: 'https://frut.co.za/cdn/shop/articles/Firefly_passionfruit_juice_with_ic_e_and_garnished_with_mint_leaves_on_a_clean_white_surface_59402-Recovered.png?v=1714396318',
+        flavors: ['frutado', 'citrico', 'leve'],
+        ingredients: [
+          { id: 'vodka',               quantidade: '40 ml (pode substituir por gin)', alcoolico: true  },
+          { id: 'maracutala-maracuja', quantidade: '30 ml',                           alcoolico: false },
+          { id: 'suco-laranja',        quantidade: 'a gosto',                         alcoolico: false },
+          { id: 'gelo',                quantidade: 'a gosto',                         alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione a vodka e o maracujá.',
+          'Complete com suco de laranja.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Mantém o drink leve e fácil de beber.',
+        },
+      },
     ];
 
 
@@ -2479,14 +2618,7 @@
     }
 
     function updateIngredientActions() {
-      const bar = document.getElementById('ingredientes-actions');
-      if (!bar) return;
-
-      if (state.selectedIngredients.size > 0) {
-        bar.style.display = 'flex';
-      } else {
-        bar.style.display = 'none';
-      }
+      updateActionBar('ingredientes-actions', state.selectedIngredients.size > 0);
     }
 
 
@@ -2519,11 +2651,19 @@
     }
 
     function updateFlavorActions() {
-      const bar = document.getElementById('sabores-actions');
-      if (!bar) return;
+      updateActionBar('sabores-actions', state.selectedFlavors.size > 0);
+    }
 
-      if (state.selectedFlavors.size > 0) {
-        bar.style.display = 'flex';
+    function updateActionBar(id, visible) {
+      const bar = document.getElementById(id);
+      if (!bar) return;
+      if (visible) {
+        if (bar.style.display === 'none' || bar.style.display === '') {
+          bar.style.display = 'flex';
+          bar.style.animation = 'none';
+          bar.offsetHeight; // reflow para re-trigger
+          bar.style.animation = '';
+        }
       } else {
         bar.style.display = 'none';
       }
