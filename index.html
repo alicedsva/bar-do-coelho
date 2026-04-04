@@ -1026,14 +1026,15 @@
     // ══════════════════════════
 
     const INGREDIENTS_ALCOOLICOS = [
-      { id: 'aperol',        name: 'Aperol' },
-      { id: 'campari',       name: 'Campari' },
-      { id: 'espumante',     name: 'Espumante' },
-      { id: 'gin',           name: 'Gin' },
-      { id: 'rum',           name: 'Rum' },
-      { id: 'triple-sec',    name: 'Triple Sec' },
-      { id: 'vermute',       name: 'Vermute' },
-      { id: 'vodka',         name: 'Vodka' },
+      { id: 'aperol',         name: 'Aperol' },
+      { id: 'bitter-schluck', name: 'Bitter Schluck' },
+      { id: 'campari',        name: 'Campari' },
+      { id: 'espumante',      name: 'Espumante' },
+      { id: 'gin',            name: 'Gin' },
+      { id: 'rum',            name: 'Rum' },
+      { id: 'triple-sec',     name: 'Triple Sec' },
+      { id: 'vermute',        name: 'Vermute' },
+      { id: 'vodka',          name: 'Vodka' },
     ];
 
     const INGREDIENTS_NAO_ALCOOLICOS = [
@@ -2389,6 +2390,120 @@
         glass: {
           ideal: 'Copo alto',
           descricao: 'Mantém o drink leve e fácil de beber.',
+        },
+      },
+      {
+        name: 'Schluck Spritz',
+        description: 'Leve e borbulhante, com amargor equilibrado e final refrescante. Uma variação direta dos spritz clássicos.',
+        image: 'https://engarrafadormoderno.com.br/wp-content/uploads/2023/02/Schluck-230222-Bier-Likor-Credito-Gabriel-Sarago.png',
+        flavors: ['amargo', 'refrescante', 'classico'],
+        ingredients: [
+          { id: 'bitter-schluck', quantidade: '60 ml',   alcoolico: true  },
+          { id: 'espumante',      quantidade: '90 ml',   alcoolico: true  },
+          { id: 'agua-gas',       quantidade: '30 ml',   alcoolico: false },
+          { id: 'gelo',           quantidade: 'a gosto', alcoolico: false },
+          { id: 'laranja',        quantidade: 'opcional', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione o espumante.',
+          'Coloque o bitter.',
+          'Complete com água com gás.',
+          'Misture suavemente.',
+          'Finalize com a fatia de laranja, se quiser.',
+        ],
+        glass: {
+          ideal: 'Taça',
+          descricao: 'Preserva o gás e valoriza o aroma.',
+        },
+      },
+      {
+        name: 'Schluck Tônica',
+        description: 'Simples e direto, com amargor mais evidente e final seco. Ideal para quem gosta de drinks menos doces.',
+        image: 'https://adaptive-images.uooucdn.com.br/ik-seo/tr:w-1100,h-1594,c-at_max,pr-true,q-90/a22494-ogxytngyrt0/pv/d4/b9/54/19f374d5cca5563fecc1a85868/licor-fino-de-quinino-700ml-tonic-likor-schluck-large-3.png',
+        flavors: ['amargo', 'refrescante', 'leve'],
+        ingredients: [
+          { id: 'bitter-schluck', quantidade: '50 ml',   alcoolico: true  },
+          { id: 'agua-tonica',    quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',           quantidade: 'a gosto', alcoolico: false },
+          { id: 'laranja',        quantidade: 'opcional', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione o bitter.',
+          'Complete com água tônica.',
+          'Misture suavemente.',
+          'Finalize com laranja, se quiser.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Mantém leveza e refrescância.',
+        },
+      },
+      {
+        name: 'Schluck Negroni',
+        description: 'Variação do negroni com bitter schluck no lugar do campari. Mantém a estrutura clássica com perfil levemente diferente.',
+        image: 'https://adaptive-images.uooucdn.com.br/ik-seo/tr:w-1100,h-1594,c-at_max,pr-true,q-90/a22494-ogxytngyrt0/pv/ea/0d/a2/ed891d6dbc97ccd9539623805e/bitter-700ml-schluck-large-2.jpg',
+        flavors: ['amargo', 'intenso', 'classico'],
+        ingredients: [
+          { id: 'gin',            quantidade: '30 ml (pode substituir por rum)', alcoolico: true  },
+          { id: 'vermute',        quantidade: '30 ml',                           alcoolico: true  },
+          { id: 'bitter-schluck', quantidade: '30 ml',                           alcoolico: true  },
+          { id: 'gelo',           quantidade: 'a gosto',                         alcoolico: false },
+          { id: 'laranja',        quantidade: 'casca (opcional)',                 alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione todos os ingredientes.',
+          'Misture por cerca de 20 segundos.',
+          'Pressione a casca de laranja sobre o drink e coloque no copo.',
+        ],
+        glass: {
+          ideal: 'Copo baixo',
+          descricao: 'Mantém o drink concentrado.',
+        },
+      },
+      {
+        name: 'Schluck Sour',
+        description: 'Combina acidez e amargor em um drink equilibrado, com final mais seco que os sours tradicionais.',
+        image: 'https://adaptive-images.uooucdn.com.br/ik-seo/tr:w-1100,h-1594,c-at_max,pr-true,q-90/a22494-ogxytngyrt0/pv/3e/97/d2/89936cdbb3d507c11da08a3c1e/licor-fino-de-tangerina-700ml-mandarinello-likor-schluck-large-3.jpg',
+        flavors: ['citrico', 'amargo', 'equilibrado'],
+        ingredients: [
+          { id: 'bitter-schluck', quantidade: '50 ml',                      alcoolico: true  },
+          { id: 'limao-taiti',    quantidade: '25 ml (pode usar siciliano)', alcoolico: false },
+          { id: 'xarope-acucar',  quantidade: '15 ml',                      alcoolico: false },
+          { id: 'gelo',           quantidade: 'a gosto',                     alcoolico: false },
+        ],
+        steps: [
+          'Encha a coqueteleira com gelo.',
+          'Adicione todos os ingredientes.',
+          'Agite por 10–15 segundos.',
+          'Despeje apenas o líquido no copo.',
+        ],
+        glass: {
+          ideal: 'Copo pequeno',
+          descricao: 'Mantém equilíbrio sem diluição.',
+        },
+      },
+      {
+        name: 'Schluck & Laranja',
+        description: 'Simples e equilibrado, com o dulçor da laranja suavizando o amargor do bitter.',
+        image: 'https://images.elle.com.br/2026/03/1906_acai_spritz_divulgacao.jpeg',
+        flavors: ['amargo', 'citrico', 'leve'],
+        ingredients: [
+          { id: 'bitter-schluck', quantidade: '50 ml',   alcoolico: true  },
+          { id: 'suco-laranja',   quantidade: 'a gosto', alcoolico: false },
+          { id: 'gelo',           quantidade: 'a gosto', alcoolico: false },
+        ],
+        steps: [
+          'Encha o copo com gelo.',
+          'Adicione o bitter.',
+          'Complete com suco de laranja.',
+          'Misture suavemente.',
+        ],
+        glass: {
+          ideal: 'Copo alto',
+          descricao: 'Mantém o drink leve.',
         },
       },
     ];
